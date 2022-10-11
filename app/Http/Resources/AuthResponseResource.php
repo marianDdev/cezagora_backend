@@ -3,10 +3,6 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
-use App\Http\Resources\ManufacturerResource;
-use App\Http\Resources\DistributorResource;
-use App\Http\Resources\WholesalerResource;
-use App\Http\Resources\RetailerResource;
 
 class AuthResponseResource extends JsonResource
 {
