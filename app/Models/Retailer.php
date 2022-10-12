@@ -9,6 +9,13 @@ class Retailer extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'organization_id',
+        'name',
+        'email',
+        'phone',
+    ];
+
     const IN_STORE_METHOD     = 'in_store';
     const ONLINE_SHOP_METHOD    = 'online_shop';
     const ON_MARKETPLACE_METHOD = 'on_markets';
