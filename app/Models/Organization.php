@@ -4,9 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
  * @property string $type
+ * @property integer  $id
  */
 class Organization extends Model
 {
@@ -29,4 +31,25 @@ class Organization extends Model
         self::RETAILER_TYPE
     ];
 
+    const CONTINENTS = ['Africa', 'Asia', 'Australia', 'Europe', 'North America', 'South America'];
+
+    public function retailer(): HasOne
+    {
+        return $this->hasOne(Retailer::class);
+    }
+
+    public function distributor(): HasOne
+    {
+        return $this->hasOne(Distributor::class);
+    }
+
+    public function manufacturer(): HasOne
+    {
+        return $this->hasOne(Manufacturer::class);
+    }
+
+    public function wholesaler(): HasOne
+    {
+        return $this->hasOne(Wholesaler::class);
+    }
 }

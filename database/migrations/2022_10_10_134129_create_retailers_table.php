@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Organization;
 use App\Models\Retailer;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -20,12 +21,12 @@ return new class extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->string('phone');
-            $table->enum('continent', ['africa', 'asia', 'australia', 'europe', 'north_america', 'south_america'])->nullable();
+            $table->enum('continent', Organization::CONTINENTS)->nullable();
             $table->string('country')->nullable();
             $table->string('city')->nullable();
             $table->text('address')->nullable();
             $table->json('products_categories')->nullable();
-            $table->enum('selling_methods', Retailer::SELLING_METHODS)->nullable();
+            $table->json('selling_methods')->nullable();
             $table->enum('marketplaces', Retailer::MARKETPLACES)->nullable();
             $table->timestamps();
         });
