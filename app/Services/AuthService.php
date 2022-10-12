@@ -10,7 +10,14 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthService
 {
-    public function register(array $validated): AuthResponseResource
+    private OrganizationService $organizationService;
+
+    public function __construct(OrganizationService $organizationService)
+    {
+        $this->organizationService = $organizationService;
+    }
+
+    public function register(array $validated): array
     {
         $organization = Organization::create(['type' => $validated['organization_type']]);
 
@@ -26,7 +33,7 @@ class AuthService
             ]
         );
 
-        $organizationModel = $this->getOrganizationModel($organization);
+        $organizationModel = $this->organizationService->getOrganizationType($organization);
         $organizationType  = $organizationModel::create(
             [
                 'organization_id' => $organization->id,
@@ -44,20 +51,17 @@ class AuthService
         Organization $organization,
         Model        $organizationType,
         string        $token = ''
-    ): AuthResponseResource
+    ): array
     {
         $authData = [
-            'token' => $token,
             'organization'      => $organization,
             'user'              => $user,
             'organization_type' => $organizationType,
         ];
 
-        return new AuthResponseResource($authData);
-    }
-
-    public function getOrganizationModel(Organization $organization): string
-    {
-        return 'App\Models\\' . ucfirst($organization->type);
+        return [
+            'token' => $token,
+            'data' => new AuthResponseResource($authData)
+        ];
     }
 }

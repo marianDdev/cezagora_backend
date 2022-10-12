@@ -7,26 +7,32 @@ use App\Http\Requests\RegisterRequest;
 use App\Http\Resources\AuthResponseResource;
 use App\Models\User;
 use App\Services\AuthService;
+use App\Services\OrganizationService;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class AuthenticationController extends Controller
 {
-    public function register(RegisterRequest $request, AuthService $service): AuthResponseResource
+    public function register(
+        RegisterRequest $request,
+        AuthService $authService
+    ): array
     {
-        $authData = $service->register($request->validated());
+        $authData = $authService->register($request->validated());
 
-        event(new Registered($authData['user']));
+        event(new Registered($authData['data']['user']));
 
-        Auth::login($authData['user']);
+        Auth::login($authData['data']['user']);
 
         return $authData;
     }
 
-    public function login(Request $request, AuthService $service): AuthResponseResource
-    {
-
+    public function login(
+        Request $request,
+        AuthService $authService,
+        OrganizationService $organizationService
+    ): array {
         if (!Auth::attempt($request->only('email', 'password'))) {
             return response()->json([
                                         'message' => 'Invalid login details',
@@ -36,10 +42,8 @@ class AuthenticationController extends Controller
         $user = User::where('email', $request['email'])->firstOrFail();
 
         $token = $user->createToken('auth_token')->plainTextToken;
-        $organizationModel = $service->getOrganizationModel($user->organization);
-        $userOrganization = $organizationModel::where('organization_id', $user->organization_id)->first();
+        $userOrganization = $organizationService->organizationTypeModel($user->organization);
 
-        return $service->responseData($user, $user->organization, $userOrganization, $token);
-
+        return $authService->responseData($user, $user->organization, $userOrganization, $token);
     }
 }

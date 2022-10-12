@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Retailer extends Model
 {
@@ -14,11 +15,18 @@ class Retailer extends Model
         'name',
         'email',
         'phone',
+        'continent',
+        'country',
+        'city',
+        'address',
+        'products_categories',
+        'selling_methods',
+        'marketplaces',
     ];
 
     const IN_STORE_METHOD     = 'in_store';
     const ONLINE_SHOP_METHOD    = 'online_shop';
-    const ON_MARKETPLACE_METHOD = 'on_markets';
+    const ON_MARKETPLACE_METHOD = 'on_marketplaces';
 
     const SELLING_METHODS = [
         self::IN_STORE_METHOD,
@@ -45,4 +53,14 @@ class Retailer extends Model
         self::OLX,
         self::OTHER_MARKETPLACE,
     ];
+
+    public function organization(): BelongsTo
+    {
+        return $this->belongsTo(Organization::class);
+    }
+
+    public function hasAttribute(string $key): bool
+    {
+        return array_key_exists($key, $this->getAttributes());
+    }
 }

@@ -9,6 +9,9 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
+/**
+ * @property Organization $organization
+ */
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
@@ -35,5 +38,25 @@ class User extends Authenticatable
     public function organization(): BelongsTo
     {
         return $this->belongsTo(Organization::class);
+    }
+
+    public function isRetailer()
+    {
+        return $this->organization->type = Organization::RETAILER_TYPE;
+    }
+
+    public function isDistributor()
+    {
+        return $this->organization->type = Organization::DISTRIBUTOR_TYPE;
+    }
+
+    public function isWholeSaler()
+    {
+        return $this->organization->type = Organization::WHOLESALER_TYPE;
+    }
+
+    public function isManufacturer()
+    {
+        return $this->organization->type = Organization::MANUFACTURER_TYPE;
     }
 }
