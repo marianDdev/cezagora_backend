@@ -9,6 +9,8 @@ class ProductsCategory extends Model
 {
     use HasFactory;
 
+    protected $fillable = ['name'];
+
     const CATEGORIES = [
         'skin_cream',
         'skin_emulsion',
