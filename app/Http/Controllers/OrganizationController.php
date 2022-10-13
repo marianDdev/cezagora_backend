@@ -3,7 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UpdateOrganizationRequest;
+use App\Http\Requests\UploadListRequest;
+use App\Services\MediaService;
 use App\Services\OrganizationService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class OrganizationController extends Controller
 {
@@ -21,5 +27,27 @@ class OrganizationController extends Controller
                 'code' => 401
             ]
         );
+    }
+
+    public function uploadNewFile(Request $request, MediaService $mediaService): void
+    {
+        $mediaService->uploadFile($request);
+    }
+
+    public function replaceFile(Request $request, MediaService $mediaService, int $fileId)
+    {
+        $mediaService->replaceFile($request, $fileId);
+    }
+
+    public function deletFile(int $fileId): JsonResponse
+    {
+        $file = Media::find($fileId);
+
+        if (!is_null($file)) {
+            $file->delete();
+            return response()->json(['successfully deleted']);
+        }
+
+        return response()->json(["you can't delete this file."], 401);
     }
 }
