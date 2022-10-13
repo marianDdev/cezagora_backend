@@ -12,6 +12,12 @@ class Retailer extends Model implements HasMedia
 {
     use HasFactory, InteractsWithMedia;
 
+    protected $casts = [
+        'products_categories' => 'array',
+        'selling_methods'     => 'array',
+        'marketplaces'        => 'array',
+    ];
+
     protected $fillable = [
         'organization_id',
         'name',
@@ -26,7 +32,7 @@ class Retailer extends Model implements HasMedia
         'marketplaces',
     ];
 
-    const IN_STORE_METHOD     = 'in_store';
+    const IN_STORE_METHOD       = 'in_store';
     const ONLINE_SHOP_METHOD    = 'online_shop';
     const ON_MARKETPLACE_METHOD = 'on_marketplaces';
 
@@ -34,15 +40,15 @@ class Retailer extends Model implements HasMedia
         self::IN_STORE_METHOD,
         self::ONLINE_SHOP_METHOD,
         self::ON_MARKETPLACE_METHOD,
-];
+    ];
 
-    const AMAZON = 'amazon';
-    const EBAY = 'ebay';
-    const ALIBABA = 'alibaba';
-    const ETSY = 'etsy';
-    const ALIEXPRESS = 'aliexpress';
-    const EMAG = 'emag';
-    const OLX = 'olx';
+    const AMAZON            = 'amazon';
+    const EBAY              = 'ebay';
+    const ALIBABA           = 'alibaba';
+    const ETSY              = 'etsy';
+    const ALIEXPRESS        = 'aliexpress';
+    const EMAG              = 'emag';
+    const OLX               = 'olx';
     const OTHER_MARKETPLACE = 'other_marketplace';
 
     const MARKETPLACES = [

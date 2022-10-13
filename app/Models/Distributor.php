@@ -22,6 +22,8 @@ class Distributor extends Model implements HasMedia
 {
     use HasFactory, InteractsWithMedia;
 
+    protected $casts = ['products_categories' => 'array'];
+
     protected $fillable = [
         'organization_id',
         'name',

@@ -22,10 +22,8 @@ class OrganizationController extends Controller
         }
 
         return response()->json(
-            [
-                'message' => 'You are not allowed to update this organization',
-                'code' => 401
-            ]
+            ['You are not allowed to update this organization'],
+            401
         );
     }
 
