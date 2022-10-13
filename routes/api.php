@@ -22,7 +22,21 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::middleware(['auth:sanctum'])->group(function () {
-    Route::patch('/', [OrganizationController::class, 'update'])->name('retailer.update');
+    Route::group(
+        ['prefix' => '/organization'],
+        function () {
+            Route::patch('/details', [OrganizationController::class, 'update'])->name('organization.update_details');
+
+            Route::group(
+                ['prefix' => '/files'],
+                function () {
+                    Route::post('/upload', [OrganizationController::class, 'uploadNewFile'])->name('organization.upload_file');
+                    Route::post('{fileId}/replace', [OrganizationController::class, 'replaceFile'])->name('organization.replace_file');
+                    Route::delete('/{fileId}', [OrganizationController::class, 'deletFile'])->name('organization.delete_file');
+                }
+            );
+        }
+    );
 });
 
 Route::post('/register', [AuthenticationController::class, 'register'])

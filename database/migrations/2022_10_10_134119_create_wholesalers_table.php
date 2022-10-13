@@ -24,6 +24,7 @@ return new class extends Migration
             $table->string('city')->nullable();
             $table->text('address')->nullable();
             $table->json('products_categories')->nullable();
+            $table->boolean('has_list_uploaded')->default(0);
             $table->timestamps();
         });
     }

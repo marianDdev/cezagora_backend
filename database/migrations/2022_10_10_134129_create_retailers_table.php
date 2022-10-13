@@ -28,6 +28,7 @@ return new class extends Migration
             $table->json('products_categories')->nullable();
             $table->json('selling_methods')->nullable();
             $table->enum('marketplaces', Retailer::MARKETPLACES)->nullable();
+            $table->boolean('has_list_uploaded')->default(0);
             $table->timestamps();
         });
     }
