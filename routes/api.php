@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\AuthenticationController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\ConnectionRequestController;
 use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\SearchController;
 use Illuminate\Support\Facades\Route;
@@ -44,6 +45,19 @@ Route::middleware(['auth:sanctum'])->group(function () {
         function () {
             Route::get('/all', [SearchController::class, 'searchAllLimited'])->name('search.all');
             Route::get('/companies', [SearchController::class, 'searchByCompanies'])->name('search.companies');
+        }
+    );
+
+    Route::group(
+        ['prefix' => '/connections'],
+        function () {
+            Route::group(
+                ['prefix' => '/requests'],
+                function () {
+                    Route::post('/', [ConnectionRequestController::class, 'create'])->name('connections.request.create');
+                    Route::post('/{id}/accept', [ConnectionRequestController::class, 'acceptRequest'])->name('connections.request.accept');
+                }
+            );
         }
     );
 });
