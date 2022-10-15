@@ -8,6 +8,7 @@ use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\AuthenticationController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\ConnectionRequestController;
+use App\Http\Controllers\FollowingController;
 use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\SearchController;
 use Illuminate\Support\Facades\Route;
@@ -48,13 +49,15 @@ Route::middleware(['auth:sanctum'])->group(function () {
         }
     );
 
+    Route::post('/{organizationId}/follow', [FollowingController::class, 'create'])->name('following.create');
+
     Route::group(
         ['prefix' => '/connections'],
         function () {
             Route::group(
                 ['prefix' => '/requests'],
                 function () {
-                    Route::post('/', [ConnectionRequestController::class, 'create'])->name('connections.request.create');
+                    Route::post('/{id}/create', [ConnectionRequestController::class, 'create'])->name('connections.request.create');
                     Route::post('/{id}/accept', [ConnectionRequestController::class, 'acceptRequest'])->name('connections.request.accept');
                 }
             );

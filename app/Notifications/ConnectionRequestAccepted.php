@@ -47,7 +47,7 @@ class ConnectionRequestAccepted extends Notification
         return (new MailMessage)
             ->from(env('MAIL_FROM_ADDRESS'))
             ->greeting(sprintf('Hello, %s', $this->data['receiver']))
-            ->line(sprintf('%s %s accepted your connection request.', $this->data['organization_type'], $this->data['auth_organization_name']))
+            ->line(sprintf('%s %s accepted your connection request.', $this->data['organization_type'], $this->data['organization_name']))
             ->action('Click here to see his Cezagora profile', url('/'))
             ->line('Thank you for using Cezagora!');
     }
