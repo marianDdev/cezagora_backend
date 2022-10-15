@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\AsCollection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -13,9 +14,9 @@ class Retailer extends Model implements HasMedia
     use HasFactory, InteractsWithMedia;
 
     protected $casts = [
-        'products_categories' => 'array',
-        'selling_methods'     => 'array',
-        'marketplaces'        => 'array',
+        'products_categories' => AsCollection::class,
+        'selling_methods'     => AsCollection::class,
+        'marketplaces'        => AsCollection::class,
     ];
 
     protected $fillable = [

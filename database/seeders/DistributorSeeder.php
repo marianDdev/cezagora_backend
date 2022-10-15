@@ -14,6 +14,7 @@ use Illuminate\Support\Str;
 class DistributorSeeder extends Seeder
 {
     private Generator $faker;
+
     public function __construct()
     {
         $this->faker = Factory::create('ro_RO');
@@ -26,7 +27,7 @@ class DistributorSeeder extends Seeder
      */
     public function run()
     {
-        foreach (range(1,50) as $index) {
+        foreach (range(1, 50) as $index) {
             $organization = Organization::create(['type' => Organization::DISTRIBUTOR_TYPE]);
             $this->createUser($organization->id);
             $this->createDistributor($organization->id);
@@ -52,14 +53,14 @@ class DistributorSeeder extends Seeder
     {
         Distributor::create(
             [
-                'organization_id' => $organizationId,
-                'name'            => $this->faker->company,
-                'email'           => $this->faker->companyEmail,
-                'phone'           => $this->faker->phoneNumber,
-                'continent' => "Europe",
-                'country' => 'Romania',
-                'city' => $this->faker->city,
-                'address' => $this->faker->address,
+                'organization_id'     => $organizationId,
+                'name'                => $this->faker->company,
+                'email'               => $this->faker->companyEmail,
+                'phone'               => $this->faker->phoneNumber,
+                'continent'           => "Europe",
+                'country'             => 'Romania',
+                'city'                => $this->faker->city,
+                'address'             => $this->faker->address,
                 'products_categories' => ['face_mask', 'hair_oil'],
             ]
         );

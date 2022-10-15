@@ -8,6 +8,7 @@ use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\AuthenticationController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\OrganizationController;
+use App\Http\Controllers\SearchController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -35,6 +36,14 @@ Route::middleware(['auth:sanctum'])->group(function () {
                     Route::delete('/{fileId}', [OrganizationController::class, 'deletFile'])->name('organization.delete_file');
                 }
             );
+        }
+    );
+
+    Route::group(
+        ['prefix' => '/search'],
+        function () {
+            Route::get('/all', [SearchController::class, 'searchAllLimited'])->name('search.all');
+            Route::get('/companies', [SearchController::class, 'searchByCompanies'])->name('search.companies');
         }
     );
 });

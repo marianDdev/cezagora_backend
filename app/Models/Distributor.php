@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\AsCollection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -22,7 +23,7 @@ class Distributor extends Model implements HasMedia
 {
     use HasFactory, InteractsWithMedia;
 
-    protected $casts = ['products_categories' => 'array'];
+    protected $casts = ['products_categories' => AsCollection::class];
 
     protected $fillable = [
         'organization_id',
