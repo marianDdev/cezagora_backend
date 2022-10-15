@@ -32,7 +32,6 @@ class MediaService
         return response()->json(
           [
               'message' => 'Successfully uploaded.',
-              'code' => 200
           ]
         );
     }
