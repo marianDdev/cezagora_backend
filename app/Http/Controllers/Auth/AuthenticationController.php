@@ -42,7 +42,7 @@ class AuthenticationController extends Controller
         $user = User::where('email', $request['email'])->firstOrFail();
 
         $token = $user->createToken('auth_token')->plainTextToken;
-        $userOrganization = $organizationService->organizationTypeModel($user->organization);
+        $userOrganization = $organizationService->getOrganizationTypeModel($user->organization);
 
         return $authService->responseData($user, $user->organization, $userOrganization, $token);
     }

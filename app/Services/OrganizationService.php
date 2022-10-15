@@ -17,7 +17,7 @@ class OrganizationService
         return 'App\Models\\' . ucfirst($organization->type);
     }
 
-    public function organizationTypeModel(Organization $organization): ?Model
+    public function getOrganizationTypeModel(Organization $organization): ?Model
     {
         $organizationType = $this->getOrganizationType($organization);
 
@@ -46,10 +46,10 @@ class OrganizationService
         /** @var User $user */
         $user = Auth::user();
 
-        return $this->organizationTypeModel($user->organization);
+        return $this->getOrganizationTypeModel($user->organization);
     }
 
-    private function getModelResource(Organization $organization): string
+    public function getModelResource(Organization $organization): string
     {
         return 'App\Http\Resources\\' . ucfirst($organization->type) . 'Resource';
     }

@@ -52,4 +52,9 @@ class Organization extends Model
     {
         return $this->hasOne(Wholesaler::class);
     }
+
+    public function user(): HasOne
+    {
+        return $this->hasOne(User::class);
+    }
 }

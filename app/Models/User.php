@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -58,5 +59,15 @@ class User extends Authenticatable
     public function isManufacturer()
     {
         return $this->organization->type = Organization::MANUFACTURER_TYPE;
+    }
+
+    public function connectionRequests(): HasMany
+    {
+        return $this->hasMany(ConnectionRequest::class);
+    }
+
+    public function hasConnectionRequests(): bool
+    {
+        return !is_null($this->connectionRequests);
     }
 }
