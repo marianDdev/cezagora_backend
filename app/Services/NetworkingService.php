@@ -4,13 +4,15 @@ namespace App\Services;
 
 use App\Http\Resources\ConnectionRequestResource;
 use App\Http\Resources\ConnectionResource;
-use App\Http\Resources\DistributorResource;
 use App\Models\Connection;
 use App\Models\ConnectionRequest;
+use App\Models\Follower;
+use App\Models\Following;
 use App\Models\Organization;
 use App\Models\User;
 use App\Notifications\ConnectionRequestAccepted;
 use App\Notifications\ConnectionRequestReceived;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 
 class NetworkingService
@@ -22,21 +24,34 @@ class NetworkingService
         $this->organizationService = $organizationService;
     }
 
-    public function createConnectionRequest(array $validated): ConnectionRequestResource
+    public function createConnectionRequest(int $organizationId): ConnectionRequestResource
     {
         /** @var User $authUser */
-        $authUser = Auth::user();
-        $authOrganization = $this->organizationService->getOrganizationByAuthUser();
+        $authUser         = Auth::user();
+        $authOrganizationModel = $this->organizationService->getOrganizationByAuthUser();
 
-        $data = array_merge(
-            [
-                'user_id' => $authUser->id,
-                'auth_organization' => $authOrganization->name
-            ], $validated
-        );
+        $receiverOrganization = Organization::find($organizationId);
+        $receiverUserId               = $receiverOrganization->user->id;
+        $receiverOrganizationModel = $this->organizationService->getOrganizationTypeModel($receiverOrganization);
+
+        $data = [
+            'user_id'                => $receiverUserId,
+            'organization_id'      => $authUser->organization->id,
+            'organization_type' => $authUser->organization->type,
+            'name' => $authOrganizationModel->name
+        ];
+
+        $email = [
+            'receiver' => $receiverOrganizationModel->name,
+            'requester_org_type' => $authUser->organization->type,
+            'requester_org_name' => $authOrganizationModel->name,
+        ];
+
         $newConnectionRequest = ConnectionRequest::create($data);
 
-        $authUser->notify(new ConnectionRequestReceived($data));
+        $this->createFollowing($receiverOrganization);
+
+        $receiverOrganization->user->notify(new ConnectionRequestReceived($email));
 
         return new ConnectionRequestResource($newConnectionRequest);
     }
@@ -47,61 +62,64 @@ class NetworkingService
      *
      * @param int $id
      *
-     * @return ConnectionResource
+     * @return ConnectionResource|JsonResponse
      */
-    public function acceptConnectionRequest(int $id): ConnectionResource
+    public function acceptConnectionRequest(int $id): ConnectionResource|JsonResponse
     {
+        /** @var User $authUser */
+        $authUser = Auth::user();
+
         $connectionRequest = ConnectionRequest::find($id);
-        $organizationDetailes =  $this->extractOrganizationDetails($connectionRequest);
-        $connection = $this->createConnection($organizationDetailes);
+        $requesterOrganization      = Organization::find($connectionRequest->organization_id);
 
-        $connectedOrganizationUser = $this->extractUserToNotify($organizationDetailes['organization_id']);
+        if ($connectionRequest->user_id !== $authUser->id) {
+            return response()->json(['You are now allowed to accept this connection request.'], 401);
+        }
 
-        $emailData = $this->composeEmailData($connection);
-        $connectedOrganizationUser->notify(new ConnectionRequestAccepted($emailData));
+        $requesterOrganizationDetailes = array_merge(['user_id' => $authUser->id], $this->extractOrganizationDetails($requesterOrganization));
+        $connection           = $this->createConnection($requesterOrganizationDetailes);
 
+        $authOrganizationModel = $this->organizationService->getOrganizationByAuthUser();
+
+        $email = [
+                'receiver' => $connection['name'],
+                'organization_type' => $authUser->organization->type,
+                'organization_name' => $authOrganizationModel->name
+        ];
+
+
+        $authUser->notify(new ConnectionRequestAccepted($email));
         $connectionRequest->delete();
 
         return $connection;
     }
 
-    private function extractOrganizationDetails(ConnectionRequest $connectionRequest): array
+    public function createFollowing(Organization $organization): void
     {
-        $organization = Organization::find($connectionRequest->organization_id);
+        $followingData = array_merge(['user_id' => Auth::user()->id], $this->extractOrganizationDetails($organization));
+        Following::create($followingData);
+
+        $authOrganizationModel = $this->organizationService->getOrganizationByAuthUser();
+        $followerData          = array_merge(['user_id' => $organization->user->id], $this->extractOrganizationDetails($authOrganizationModel->organization));
+        Follower::create($followerData);
+    }
+
+    private function extractOrganizationDetails(Organization $organization): array
+    {
         $model = $this->organizationService->getOrganizationTypeModel($organization);
 
         return [
-            'user_id' => Auth::user()->id,
-            'organization_id' => $connectionRequest->organization_id,
-            'organization_type' => $connectionRequest->organization_type,
-            'name' => $connectionRequest->name,
-            'continent' => $model->continent,
-            'country' => $model->country,
-            'city' => $model->city,
+            'organization_id'   => $organization->id,
+            'organization_type' => $organization->type,
+            'name'              => $model->name,
+            'continent'         => $model->continent,
+            'country'           => $model->country,
+            'city'              => $model->city,
         ];
     }
 
     private function createConnection(array $data): ConnectionResource
     {
         return new ConnectionResource(Connection::create($data));
-    }
-
-    private function extractUserToNotify(int $organizationId): User
-    {
-        /** @var User $user */
-        $user = Organization::find($organizationId)->user;
-
-        return $user;
-    }
-
-    private function composeEmailData(ConnectionResource $connection): array
-    {
-        $authOrganization = $this->organizationService->getOrganizationByAuthUser();
-
-        return [
-          'receiver' => $connection->name,
-          'organization_type' => $connection->organization_type,
-          'auth_organization_name' => $authOrganization->name
-        ];
     }
 }

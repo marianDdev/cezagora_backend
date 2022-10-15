@@ -70,4 +70,34 @@ class User extends Authenticatable
     {
         return !is_null($this->connectionRequests);
     }
+
+    public function connections(): HasMany
+    {
+        return $this->hasMany(Connection::class);
+    }
+
+    public function hasConnections(): bool
+    {
+        return !is_null($this->connections);
+    }
+
+    public function followings(): HasMany
+    {
+        return $this->hasMany(Following::class);
+    }
+
+    public function hasFollowings(): bool
+    {
+        return !is_null($this->followings);
+    }
+
+    public function followers(): HasMany
+    {
+        return $this->hasMany(Follower::class);
+    }
+
+    public function hasFollowers(): bool
+    {
+        return !is_null($this->followers);
+    }
 }

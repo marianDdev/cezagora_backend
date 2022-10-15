@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
@@ -45,8 +46,8 @@ class ConnectionRequestReceived extends Notification
     {
         return (new MailMessage)
             ->from(env('MAIL_FROM_ADDRESS'))
-            ->greeting(sprintf('Hello, %s', $this->data['auth_organization']))
-            ->line(sprintf('You have a new connection request from the %s %s.', $this->data['organization_type'], $this->data['name']))
+            ->greeting(sprintf('Hello, %s', $this->data['receiver']))
+            ->line(sprintf('You have a new connection request from the %s %s.', $this->data['requester_org_type'], $this->data['requester_org_name']))
             ->action('Click on the link to see the connection request', url('www.cezius.tech'))
             ->line('Thank you for using Cezagora!');
     }
