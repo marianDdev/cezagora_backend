@@ -8,7 +8,6 @@ use App\Services\MediaService;
 use App\Services\OrganizationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class OrganizationController extends Controller
