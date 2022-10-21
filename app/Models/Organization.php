@@ -16,7 +16,8 @@ class Organization extends Model
 
     protected $fillable = [
       'type',
-      'number_of_users'
+      'number_of_users',
+      'has_details_completed'
     ];
 
     const MANUFACTURER_TYPE = 'manufacturer';

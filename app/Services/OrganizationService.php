@@ -35,6 +35,7 @@ class OrganizationService
         }
 
         $organizationType->save();
+        $this->updateHasDetailsCompleted($organizationType);
 
         $modelResource = $this->getModelResource($organizationType->organization);
 
@@ -70,5 +71,14 @@ class OrganizationService
         if ($marketplacesValidated->fails()) {
             return $marketplacesValidated->errors()->getMessages();
         }
+    }
+
+    private function updateHasDetailsCompleted(Model $organizationTypeModel): void
+    {
+        /** @var Organization $organization */
+        $organization = $organizationTypeModel->organization;
+
+        $organization->has_details_completed = true;
+        $organization->save();
     }
 }
