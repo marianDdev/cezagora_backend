@@ -19,7 +19,13 @@ class AuthService
 
     public function register(array $validated): array
     {
-        $organization = Organization::create(['type' => $validated['organization_type']]);
+        $organization = Organization::create(
+            [
+                'type'                  => $validated['organization_type'],
+                'number_of_users'       => 1,
+                'has_details_completed' => false,
+            ]
+        );
 
         $user = User::create(
             [
@@ -33,6 +39,8 @@ class AuthService
             ]
         );
 
+        $token = $user->createToken('auth_token')->plainTextToken;
+
         $organizationModel = $this->organizationService->getOrganizationType($organization);
         $organizationType  = $organizationModel::create(
             [
@@ -43,14 +51,14 @@ class AuthService
             ]
         );
 
-        return $this->responseData($user, $organization, $organizationType);
+        return $this->responseData($user, $organization, $organizationType, $token);
     }
 
     public function responseData(
         User         $user,
         Organization $organization,
         Model        $organizationType,
-        string        $token = ''
+        string       $token
     ): array
     {
         $authData = [
@@ -61,7 +69,7 @@ class AuthService
 
         return [
             'token' => $token,
-            'data' => new AuthResponseResource($authData)
+            'data'  => new AuthResponseResource($authData),
         ];
     }
 }

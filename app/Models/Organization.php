@@ -32,7 +32,7 @@ class Organization extends Model
         self::RETAILER_TYPE
     ];
 
-    const CONTINENTS = ['Africa', 'Asia', 'Australia', 'Europe', 'North America', 'South America'];
+    const CONTINENTS = ['Africa', 'Asia', 'Europe', 'North America', 'Oceania', 'South America'];
 
     public function retailer(): HasOne
     {
