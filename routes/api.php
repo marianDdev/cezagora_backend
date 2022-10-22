@@ -10,7 +10,9 @@ use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\ConnectionRequestController;
 use App\Http\Controllers\FollowingController;
 use App\Http\Controllers\OrganizationController;
+use App\Http\Controllers\ProductsCategoryController;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -25,6 +27,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::middleware(['auth:sanctum'])->group(function () {
+    //organization
     Route::group(
         ['prefix' => '/organization'],
         function () {
@@ -41,6 +44,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         }
     );
 
+    //search
     Route::group(
         ['prefix' => '/search'],
         function () {
@@ -49,8 +53,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         }
     );
 
-    Route::post('/{organizationId}/follow', [FollowingController::class, 'create'])->name('following.create');
-
+    //connections
     Route::group(
         ['prefix' => '/connections'],
         function () {
@@ -63,7 +66,13 @@ Route::middleware(['auth:sanctum'])->group(function () {
             );
         }
     );
+
+    Route::post('/{organizationId}/follow', [FollowingController::class, 'create'])->name('following.create');
+
+    Route::get('/user_data', [UserController::class, 'getAutUserData'])->name('auth_user.data');
 });
+
+Route::get('/products_categories', [ProductsCategoryController::class, 'get'])->name('products_categories.get');
 
 Route::post('/register', [AuthenticationController::class, 'register'])
      ->middleware('guest')

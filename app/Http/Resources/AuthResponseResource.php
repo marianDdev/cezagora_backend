@@ -19,6 +19,7 @@ class AuthResponseResource extends JsonResource
         $resource = 'App\Http\Resources\\' . ucfirst($type) . 'Resource';
 
         return [
+            'name' => $this['organization_type']->name,
             'organization'      => new OrganizationResource($this['organization']),
             'user'              => new UserResource($this['user']),
             'organization_type' => new $resource($this['organization_type']),
