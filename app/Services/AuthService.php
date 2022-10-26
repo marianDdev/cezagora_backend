@@ -44,10 +44,12 @@ class AuthService
         $organizationModel = $this->organizationService->getOrganizationType($organization);
         $organizationType  = $organizationModel::create(
             [
-                'organization_id' => $organization->id,
-                'name'            => $validated['organization_name'],
-                'email'           => $validated['organization_email'],
-                'phone'           => $validated['organization_phone'],
+                'organization_id'     => $organization->id,
+                'name'                => $validated['organization_name'],
+                'email'               => $validated['organization_email'],
+                'phone'               => $validated['organization_phone'],
+                'products_categories' => [],
+                'has_list_uploaded'   => false,
             ]
         );
 
