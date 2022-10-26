@@ -14,6 +14,8 @@ class UserController extends Controller
         /** @var User $user */
         $user = Auth::user();
 
+        dd($user);
+
         $organizationTypModel = $organizationService->getOrganizationByAuthUser();
 
         return $service->responseData(

@@ -35,6 +35,7 @@ class Distributor extends Model implements HasMedia
         'city',
         'address',
         'products_categories',
+        'has_list_uploaded'
     ];
 
     public function hasAttribute(string $key): bool
