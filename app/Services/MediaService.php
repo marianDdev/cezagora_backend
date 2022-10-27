@@ -17,7 +17,7 @@ class MediaService
         $this->organizationService = $organizationService;
     }
 
-    public function uploadFile(Request $request): JsonResponse
+    public function uploadList(Request $request): JsonResponse
     {
         $organizationTypeModel = $this->organizationService->getOrganizationByAuthUser();
         $fileType = $request->get('file_type');
@@ -36,7 +36,7 @@ class MediaService
         );
     }
 
-    public function replaceFile(Request $request, int $fileId): JsonResponse
+    public function replaceList(Request $request, int $fileId): JsonResponse
     {
         $organizationTypeModel = $this->organizationService->getOrganizationByAuthUser();
         $file = Media::find($fileId);
