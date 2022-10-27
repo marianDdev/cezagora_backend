@@ -34,11 +34,13 @@ Route::middleware(['auth:sanctum'])->group(function () {
             Route::patch('/details', [OrganizationController::class, 'update'])->name('organization.update_details');
 
             Route::group(
-                ['prefix' => '/files'],
+                ['prefix' => '/lists'],
                 function () {
-                    Route::post('/upload', [OrganizationController::class, 'uploadNewFile'])->name('organization.upload_file');
-                    Route::post('{fileId}/replace', [OrganizationController::class, 'replaceFile'])->name('organization.replace_file');
-                    Route::delete('/{fileId}', [OrganizationController::class, 'deletFile'])->name('organization.delete_file');
+                    Route::get('/{id}', [OrganizationController::class, 'getList'])->name('organization.get_list');
+                    Route::get('/', [OrganizationController::class, 'getLists'])->name('organization.get_lists');
+                    Route::post('/upload', [OrganizationController::class, 'uploadNewList'])->name('organization.upload_file');
+                    Route::post('{listId}/replace', [OrganizationController::class, 'replaceList'])->name('organization.replace_file');
+                    Route::delete('/{listId}', [OrganizationController::class, 'deletList'])->name('organization.delete_file');
                 }
             );
         }

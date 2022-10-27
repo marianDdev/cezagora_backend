@@ -26,22 +26,47 @@ class OrganizationController extends Controller
         );
     }
 
-    public function uploadNewFile(Request $request, MediaService $mediaService): void
+    public function getList(int $id): Media
     {
-        $mediaService->uploadFile($request);
+        return Media::find($id);
     }
 
-    public function replaceFile(Request $request, MediaService $mediaService, int $fileId)
+    public function getLists(OrganizationService $service)
     {
-        $mediaService->replaceFile($request, $fileId);
+        $organizationTypeModel = $service->getOrganizationByAuthUser();
+
+        if (!is_null($organizationTypeModel)) {
+           return $organizationTypeModel->getMedia('lists');
+        }
+
+        return response()->json(
+            ['You are not allowed to update this organization'],
+            401
+        );
     }
 
-    public function deletFile(int $fileId): JsonResponse
+    public function uploadNewList(Request $request, MediaService $mediaService): JsonResponse
     {
-        $file = Media::find($fileId);
+        $mediaService->uploadList($request);
 
-        if (!is_null($file)) {
-            $file->delete();
+        return response()->json(
+            [
+                'message' => 'Successfully uploaded.',
+            ]
+        );
+    }
+
+    public function replaceList(Request $request, MediaService $mediaService, int $listId)
+    {
+        $mediaService->replaceList($request, $listId);
+    }
+
+    public function deletList(int $listId): JsonResponse
+    {
+        $list = Media::find($listId);
+
+        if (!is_null($list)) {
+            $list->delete();
             return response()->json(['successfully deleted']);
         }
 
