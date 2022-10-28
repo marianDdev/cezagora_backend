@@ -2,10 +2,9 @@
 
 namespace App\Services;
 
-use App\Models\Distributor;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class MediaService
@@ -17,16 +16,19 @@ class MediaService
         $this->organizationService = $organizationService;
     }
 
+    /**
+     * @throws Exception
+     */
     public function uploadList(Request $request): JsonResponse
     {
         $organizationTypeModel = $this->organizationService->getOrganizationByAuthUser();
-        $fileType = $request->get('file_type');
-        $filesCollection = $fileType . 's';
 
-        if ($request->hasFile($fileType) && $request->file($fileType)->isValid()) {
-            $organizationTypeModel->addMediaFromRequest($fileType)->toMediaCollection($filesCollection);
+        if ($request->hasFile('list') && $request->file('list')->isValid()) {
+            $organizationTypeModel->addMediaFromRequest('list')->toMediaCollection('lists');
             $organizationTypeModel->has_list_uploaded = true;
             $organizationTypeModel->save();
+        } else {
+            throw new Exception('Your list was not uploaded.');
         }
 
         return response()->json(
