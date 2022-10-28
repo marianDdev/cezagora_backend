@@ -26,9 +26,9 @@ class OrganizationController extends Controller
         );
     }
 
-    public function getList(int $id): Media
+    public function getList(string $uuid): Media
     {
-        return Media::find($id);
+        return Media::findByUuid($uuid);
     }
 
     public function getLists(OrganizationService $service)
@@ -56,14 +56,14 @@ class OrganizationController extends Controller
         );
     }
 
-    public function replaceList(Request $request, MediaService $mediaService, int $listId)
-    {
-        $mediaService->replaceList($request, $listId);
-    }
+//    public function replaceList(Request $request, MediaService $mediaService, int $listId)
+//    {
+//        $mediaService->replaceList($request, $listId);
+//    }
 
-    public function deletList(int $listId): JsonResponse
+    public function deletList(string $uuid): JsonResponse
     {
-        $list = Media::find($listId);
+        $list = Media::findByUuid($uuid);
 
         if (!is_null($list)) {
             $list->delete();
