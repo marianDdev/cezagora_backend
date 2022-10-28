@@ -5,7 +5,6 @@ namespace App\Services;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class MediaService
 {
@@ -24,7 +23,9 @@ class MediaService
         $organizationTypeModel = $this->organizationService->getOrganizationByAuthUser();
 
         if ($request->hasFile('list') && $request->file('list')->isValid()) {
-            $organizationTypeModel->addMediaFromRequest('list')->toMediaCollection('lists');
+            $organizationTypeModel->addMediaFromRequest('list')
+                                  ->toMediaCollection('lists');
+
             $organizationTypeModel->has_list_uploaded = true;
             $organizationTypeModel->save();
         } else {
@@ -34,23 +35,6 @@ class MediaService
         return response()->json(
           [
               'message' => 'Successfully uploaded.',
-          ]
-        );
-    }
-
-    public function replaceList(Request $request, int $fileId): JsonResponse
-    {
-        $organizationTypeModel = $this->organizationService->getOrganizationByAuthUser();
-        $file = Media::find($fileId);
-        if ($file->model_id  === $organizationTypeModel->id) {
-            $file->delete();
-            $this->uploadFile($request);
-        }
-
-        return response()->json(
-          [
-              'message' => 'You are not allowed to replace this file.',
-              'code' => 401
           ]
         );
     }

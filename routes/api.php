@@ -36,10 +36,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
             Route::group(
                 ['prefix' => '/lists'],
                 function () {
-                    Route::get('/{id}', [OrganizationController::class, 'getList'])->name('organization.get_list');
                     Route::get('/', [OrganizationController::class, 'getLists'])->name('organization.get_lists');
                     Route::post('/upload', [OrganizationController::class, 'uploadNewList'])->name('organization.upload_file');
-                    //Route::post('{listId}/replace', [OrganizationController::class, 'replaceList'])->name('organization.replace_file');
                     Route::delete('/{uuid}', [OrganizationController::class, 'deletList'])->name('organization.delete_file');
                 }
             );

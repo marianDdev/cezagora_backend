@@ -26,11 +26,6 @@ class OrganizationController extends Controller
         );
     }
 
-    public function getList(string $uuid): Media
-    {
-        return Media::findByUuid($uuid);
-    }
-
     public function getLists(OrganizationService $service)
     {
         $organizationTypeModel = $service->getOrganizationByAuthUser();
@@ -55,11 +50,6 @@ class OrganizationController extends Controller
             ]
         );
     }
-
-//    public function replaceList(Request $request, MediaService $mediaService, int $listId)
-//    {
-//        $mediaService->replaceList($request, $listId);
-//    }
 
     public function deletList(string $uuid): JsonResponse
     {
