@@ -8,14 +8,26 @@ use Transliterator;
 
 class SearchService
 {
-    public function getAllLimited(array $filters, ?int $limit = null): array
+    public function getAllLimited(array $filters, ?int $limit = null): array|string
     {
-        return [
-            'manufacturers' => $this->getManufacturers($filters, $limit),
-            'distributors'  => $this->getDistributors($filters, $limit),
-            'retailers'     => $this->getRetailers($filters, $limit),
-            'wholesalers'   => $this->getWholesalers($filters, $limit),
+       $results =  [
+            'manufacturers' => $this->getManufacturers($filters, $limit)->toArray(),
+            'distributors'  => $this->getDistributors($filters, $limit)->toArray(),
+            'retailers'     => $this->getRetailers($filters, $limit)->toArray(),
+            'wholesalers'   => $this->getWholesalers($filters, $limit)->toArray(),
         ];
+
+        $lengths = [];
+
+        foreach ($results as $result) {
+            $lengths[] = count($result) === 0;
+        }
+
+        if (!in_array(false, $lengths)) {
+            return "No results";
+        }
+
+        return $results;
     }
 
     public function getManufacturers(array $filters, $limit = null): Collection
