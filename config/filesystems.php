@@ -56,6 +56,12 @@ return [
             'throw' => false,
         ],
 
+        'cezagora_react' => [
+            'driver' => 'local',
+            'root' => '/Users/marian_d_dev/dev/CEZIUS/cezagora_react/public',
+            'throw' => false,
+        ],
+
     ],
 
     /*

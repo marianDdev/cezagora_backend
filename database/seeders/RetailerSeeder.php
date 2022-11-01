@@ -29,7 +29,7 @@ class RetailerSeeder extends Seeder
         foreach (range(1,50) as $index) {
             $organization = Organization::create(['type' => Organization::RETAILER_TYPE]);
             $this->createUser($organization->id);
-            $this->createDistributor($organization->id);
+            $this->createRetailer($organization->id);
         }
     }
 
@@ -48,7 +48,7 @@ class RetailerSeeder extends Seeder
         );
     }
 
-    private function createDistributor(int $organizationId)
+    private function createRetailer(int $organizationId)
     {
         Retailer::create(
             [
