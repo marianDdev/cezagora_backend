@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
@@ -58,4 +59,15 @@ class Organization extends Model
     {
         return $this->hasOne(User::class);
     }
+
+    public function connectionRequestsSent(): HasMany
+    {
+        return $this->hasMany(ConnectionRequest::class, 'requester_id', 'id');
+    }
+
+    public function connectionRequestsReceived(): HasMany
+    {
+        return $this->hasMany(ConnectionRequest::class, 'receiver_id', 'id');
+    }
+
 }

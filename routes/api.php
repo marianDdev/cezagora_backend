@@ -60,7 +60,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
             Route::group(
                 ['prefix' => '/requests'],
                 function () {
-                    Route::post('/{id}/create', [ConnectionRequestController::class, 'create'])->name('connections.request.create');
+                    Route::post('/{receiverId}/create', [ConnectionRequestController::class, 'create'])->name('connections.request.create');
                     Route::post('/{id}/accept', [ConnectionRequestController::class, 'acceptRequest'])->name('connections.request.accept');
                 }
             );
