@@ -55,8 +55,17 @@ class OrganizationController extends Controller
     {
         $list = Media::findByUuid($uuid);
 
+
         if (!is_null($list)) {
+            $model = $list->model;
+
             $list->delete();
+
+            if (count($model->getMedia('lists')) === 0) {
+                $model->has_list_uploaded = false;
+                $model->save();
+            }
+
             return response()->json(['successfully deleted']);
         }
 
