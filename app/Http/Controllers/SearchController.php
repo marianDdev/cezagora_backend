@@ -8,9 +8,9 @@ use Illuminate\Http\Request;
 
 class SearchController extends Controller
 {
-    public function searchAllLimited(Request $request, SearchService $searchService)
+    public function searchAll(Request $request, SearchService $searchService): array|string
     {
-        return $searchService->getAllLimited($request->all());
+        return $searchService->getAll($request->all());
     }
 
     public function searchByCompanies(Request $request, SearchService $searchService): JsonResponse

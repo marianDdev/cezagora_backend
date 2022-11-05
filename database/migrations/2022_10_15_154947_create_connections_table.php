@@ -20,13 +20,8 @@ return new class extends Migration
     {
         Schema::create('connections', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id');
             $table->foreignId('organization_id');
-            $table->enum('organization_type', Organization::TYPES);
-            $table->string('name');
-            $table->string('continent');
-            $table->string('country');
-            $table->string('city');
+            $table->foreignId('connected_organization_id');
             $table->timestamps();
         });
     }

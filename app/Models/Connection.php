@@ -11,17 +11,17 @@ class Connection extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id',
         'organization_id',
-        'organization_type',
-        'name',
-        'continent',
-        'country',
-        'city',
+        'connected_organization_id',
     ];
 
-    public function user(): BelongsTo
+    public function organization(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Organization::class);
+    }
+
+    public function connectedOrganization()
+    {
+        return $this->belongsTo(Organization::class, 'connected_organization_id', 'id');
     }
 }

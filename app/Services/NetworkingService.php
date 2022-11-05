@@ -7,7 +7,6 @@ use App\Http\Resources\ConnectionResource;
 use App\Models\Connection;
 use App\Models\ConnectionRequest;
 use App\Models\Follower;
-use App\Models\Following;
 use App\Models\Organization;
 use App\Models\User;
 use App\Notifications\ConnectionRequestAccepted;
@@ -19,47 +18,38 @@ use Illuminate\Support\Facades\Auth;
 class NetworkingService
 {
     private OrganizationService $organizationService;
+    private NotificationService $notificationService;
 
-    public function __construct(OrganizationService $organizationService)
+    public function __construct(OrganizationService $organizationService, NotificationService $notificationService)
     {
         $this->organizationService = $organizationService;
+        $this->notificationService = $notificationService;
     }
 
     /**
      * @throws Exception
      */
-    public function createConnectionRequest(int $receiverId): ConnectionRequestResource
+    public function createConnectionRequest(int $receiverOrganizationId): ConnectionRequestResource
     {
         /** @var User $authUser */
-        $authUser         = Auth::user();
+        $authUser              = Auth::user();
         $authOrganizationModel = $this->organizationService->getOrganizationByAuthUser();
-        $hasLists = $authOrganizationModel->getMedia('lists') !== null;
+        $hasLists              = $authOrganizationModel->getMedia('lists') !== null;
 
         if (!$authOrganizationModel->organization->has_details_completed || !$hasLists) {
-            throw new Exception("you can't make connection request if you didn't add your compnay details or didn't upload stock lists." );
+            throw new Exception("you can't make connection request if you didn't add your company details or didn't upload stock lists.");
         }
 
-        $receiverOrganization = Organization::find($receiverId);
-        $receiverOrganizationModel = $this->organizationService->getOrganizationTypeModel($receiverOrganization);
-
         $data = [
-            'receiver_id'                => $receiverId,
-            'requester_id'      => $authUser->organization->id,
-            'requester_type' => $authUser->organization->type,
-            'name' => $authOrganizationModel->name
-        ];
-
-        $email = [
-            'receiver' => $receiverOrganizationModel->name,
-            'requester_org_type' => $authUser->organization->type,
-            'requester_org_name' => $authOrganizationModel->name,
+            'receiver_organization_id'  => $receiverOrganizationId,
+            'requester_organization_id' => $authUser->organization->id,
         ];
 
         $newConnectionRequest = ConnectionRequest::create($data);
 
-        $this->createFollowing($receiverOrganization);
+        $this->follow($receiverOrganizationId);
 
-        $receiverOrganization->user->notify(new ConnectionRequestReceived($email));
+        $this->notificationService->notifyAboutConnectionRequestReceived($authUser, $receiverOrganizationId);
 
         return new ConnectionRequestResource($newConnectionRequest);
     }
@@ -68,31 +58,35 @@ class NetworkingService
      * once the connection request is accepted and the networking connection is established
      * the connection request will be deleted
      *
-     * @param int $id
+     * @param int $connectionRequestid
      *
      * @return ConnectionResource|JsonResponse
      */
-    public function acceptConnectionRequest(int $id): ConnectionResource|JsonResponse
+    public function acceptConnectionRequest(int $connectionRequestid): ConnectionResource|JsonResponse
     {
         /** @var User $authUser */
-        $authUser = Auth::user();
+        $authUser              = Auth::user();
+        $connectionRequest     = ConnectionRequest::find($connectionRequestid);
+        $requesterOrganization = Organization::find($connectionRequest->requester_organization_id);
 
-        $connectionRequest = ConnectionRequest::find($id);
-        $requesterOrganization      = Organization::find($connectionRequest->organization_id);
-
-        if ($connectionRequest->user_id !== $authUser->id) {
+        if ($connectionRequest->receiver_organization_id !== $authUser->organization->id) {
             return response()->json(['You are now allowed to accept this connection request.'], 401);
         }
 
-        $requesterOrganizationDetailes = array_merge(['user_id' => $authUser->id], $this->extractOrganizationDetails($requesterOrganization));
-        $connection           = $this->createConnection($requesterOrganizationDetailes);
+        $connection = $this->createConnection(
+            [
+                'organization_id'           => $authUser->organization->id,
+                'connected_organization_id' => $requesterOrganization->id,
+            ]
+        );
 
-        $authOrganizationModel = $this->organizationService->getOrganizationByAuthUser();
+        $authOrganizationModel      = $this->organizationService->getOrganizationByAuthUser();
+        $requesterOrganizationModel = $this->organizationService->getOrganizationTypeModel($requesterOrganization);
 
         $email = [
-                'receiver' => $connection['name'],
-                'organization_type' => $authUser->organization->type,
-                'organization_name' => $authOrganizationModel->name
+            'receiver'          => $requesterOrganizationModel->name,
+            'organization_type' => $authUser->organization->type,
+            'organization_name' => $authOrganizationModel->name,
         ];
 
 
@@ -102,28 +96,71 @@ class NetworkingService
         return $connection;
     }
 
-    public function createFollowing(Organization $organization): void
+    public function follow(int $followedOrganizationId): void
     {
-        $followingData = array_merge(['user_id' => Auth::user()->id], $this->extractOrganizationDetails($organization));
-        Following::create($followingData);
+        /** @var User $user */
+        $user                   = Auth::user();
+        $followerOrganizationid = $user->organization->id;
 
-        $authOrganizationModel = $this->organizationService->getOrganizationByAuthUser();
-        $followerData          = array_merge(['user_id' => $organization->user->id], $this->extractOrganizationDetails($authOrganizationModel->organization));
-        Follower::create($followerData);
+        Follower::create(
+            [
+                'follower_organization_id' => $followerOrganizationid,
+                'followed_organization_id' => $followedOrganizationId,
+            ]
+        );
     }
 
-    private function extractOrganizationDetails(Organization $organization): array
+    /**
+     * @throws Exception
+     */
+    public function getNetworkingStatusByOrganizationId(int $organizationId): array
     {
-        $model = $this->organizationService->getOrganizationTypeModel($organization);
+        if (Organization::find($organizationId) === null) {
+            throw new Exception('This is not a valid organization.');
+        }
+        /** @var User $authUser */
+        $authUser           = Auth::user();
+        $authOrganizationId = $authUser->organization->id;
 
         return [
-            'organization_id'   => $organization->id,
-            'organization_type' => $organization->type,
-            'name'              => $model->name,
-            'continent'         => $model->continent,
-            'country'           => $model->country,
-            'city'              => $model->city,
+            'connection_requested' => $this->isConnectionRequested($authOrganizationId, $organizationId),
+            'connected'            => $this->isConnected($authOrganizationId, $organizationId),
+            'followed'             => $this->isFollowed($authOrganizationId, $organizationId),
         ];
+
+    }
+
+    private function isConnectionRequested(int $requesterOrganizationId, int $receiverOrganizationId): bool
+    {
+        return !is_null(
+            ConnectionRequest::where('requester_organization_id', $requesterOrganizationId)
+                             ->where('receiver_organization_id', $receiverOrganizationId)
+                             ->first()
+        );
+    }
+
+    private function isConnected(int $organizationId, int $connectedOrganizationId): bool
+    {
+        return
+            !is_null(
+                Connection::where('organization_id', $organizationId)
+                          ->where('connected_organization_id', $connectedOrganizationId)
+                          ->first()
+            ) ||
+            !is_null(
+                Connection::where('organization_id', $connectedOrganizationId)
+                          ->where('connected_organization_id', $organizationId)
+                          ->first()
+            );
+    }
+
+    private function isFollowed(int $followerOrganizationId, int $followedOrganizationId): bool
+    {
+        return !is_null(
+            Follower::where('follower_organization_id', $followerOrganizationId)
+                    ->where('followed_organization_id', $followedOrganizationId)
+                    ->first()
+        );
     }
 
     private function createConnection(array $data): ConnectionResource
