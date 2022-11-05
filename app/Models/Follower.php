@@ -11,17 +11,17 @@ class Follower extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id',
-        'organization_id',
-        'organization_type',
-        'name',
-        'continent',
-        'country',
-        'city',
+        'follower_organization_id',
+        'followed_organization_id',
     ];
 
-    public function user(): BelongsTo
+    public function follower(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Organization::class, 'follower_organization_id', 'id');
+    }
+
+    public function followed(): BelongsTo
+    {
+        return $this->belongsTo(Organization::class, 'followed_organization_id', 'id');
     }
 }

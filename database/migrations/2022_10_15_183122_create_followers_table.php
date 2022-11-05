@@ -14,15 +14,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('followings', function (Blueprint $table) {
+        Schema::create('followers', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id');
-            $table->foreignId('organization_id');
-            $table->enum('organization_type', Organization::TYPES);
-            $table->string('name');
-            $table->string('continent');
-            $table->string('country');
-            $table->string('city');
+            $table->foreignId('followed_organization_id');
+            $table->foreignId('follower_organization_id');
             $table->timestamps();
         });
     }

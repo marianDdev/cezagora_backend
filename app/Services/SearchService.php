@@ -8,7 +8,7 @@ use Transliterator;
 
 class SearchService
 {
-    public function getAllLimited(array $filters, ?int $limit = null): array|string
+    public function getAll(array $filters, ?int $limit = null): array|string
     {
        $results =  [
             'manufacturers' => $this->getManufacturers($filters, $limit)->toArray(),
@@ -73,12 +73,5 @@ class SearchService
                      return $query->limit($limit);
                  })
                  ->get();
-    }
-
-    private function stripAccents($str): bool|string
-    {
-        $transliterator = Transliterator::createFromRules(':: Any-Latin; :: Latin-ASCII; :: NFD; :: [:Nonspacing Mark:] Remove; :: Lower(); :: NFC;', Transliterator::FORWARD);
-
-        return $transliterator->transliterate($str);
     }
 }

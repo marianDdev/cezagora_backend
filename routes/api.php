@@ -8,7 +8,9 @@ use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\AuthenticationController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\ConnectionRequestController;
+use App\Http\Controllers\FollowerController;
 use App\Http\Controllers\FollowingController;
+use App\Http\Controllers\NetworkingController;
 use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\ProductsCategoryController;
 use App\Http\Controllers\SearchController;
@@ -48,7 +50,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::group(
         ['prefix' => '/search'],
         function () {
-            Route::get('/all', [SearchController::class, 'searchAllLimited'])->name('search.all');
+            Route::get('/all', [SearchController::class, 'searchAll'])->name('search.all');
             Route::get('/companies', [SearchController::class, 'searchByCompanies'])->name('search.companies');
         }
     );
@@ -61,13 +63,14 @@ Route::middleware(['auth:sanctum'])->group(function () {
                 ['prefix' => '/requests'],
                 function () {
                     Route::post('/{receiverId}/create', [ConnectionRequestController::class, 'create'])->name('connections.request.create');
-                    Route::post('/{id}/accept', [ConnectionRequestController::class, 'acceptRequest'])->name('connections.request.accept');
+                    Route::post('/{connectionRequestid}/accept', [ConnectionRequestController::class, 'acceptRequest'])->name('connections.request.accept');
                 }
             );
         }
     );
 
-    Route::post('/{organizationId}/follow', [FollowingController::class, 'create'])->name('following.create');
+    Route::post('/{organizationId}/follow', [FollowerController::class, 'follow'])->name('follow.create');
+    Route::get('/networking/status/{organizationId}', [NetworkingController::class, 'getStatusByOrganizationId'])->name('networking_status.by_organization_id');
 
     Route::get('/user_data', [UserController::class, 'getAutUserData'])->name('auth_user.data');
 });

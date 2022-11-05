@@ -19,8 +19,8 @@ class ConnectionRequestController extends Controller
         }
     }
 
-    public function acceptRequest(NetworkingService $service, int $id): ConnectionResource|JsonResponse
+    public function acceptRequest(NetworkingService $service, int $connectionRequestid): ConnectionResource|JsonResponse
     {
-        return $service->acceptConnectionRequest($id);
+        return $service->acceptConnectionRequest($connectionRequestid);
     }
 }
