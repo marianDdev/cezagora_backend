@@ -11,14 +11,24 @@ class ConnectionRequest extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id',
-        'organization_id',
-        'organization_type',
-        'name',
+        'receiver_id',
+        'requester_id',
+        'requester_type',
+        'requester_name',
     ];
 
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function requester(): BelongsTo
+    {
+        return $this->belongsTo(Organization::class, 'requester_id', 'id');
+    }
+
+    public function receiver(): BelongsTo
+    {
+        return $this->belongsTo(Organization::class, 'receiver_id', 'id');
     }
 }

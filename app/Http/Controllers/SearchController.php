@@ -10,7 +10,7 @@ class SearchController extends Controller
 {
     public function searchAllLimited(Request $request, SearchService $searchService)
     {
-        return $searchService->getAllLimited($request->all(), 3);
+        return $searchService->getAllLimited($request->all());
     }
 
     public function searchByCompanies(Request $request, SearchService $searchService): JsonResponse

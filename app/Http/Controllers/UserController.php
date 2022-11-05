@@ -9,19 +9,17 @@ use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
-    public function getAutUserData(AuthService $service, OrganizationService $organizationService)
+    public function getAutUserData(AuthService $service, OrganizationService $organizationService): array
     {
         /** @var User $user */
         $user = Auth::user();
 
-        dd($user);
-
-        $organizationTypModel = $organizationService->getOrganizationByAuthUser();
+        $organizationTypeModel = $organizationService->getOrganizationByAuthUser();
 
         return $service->responseData(
             $user,
             $user->organization,
-            $organizationTypModel,
+            $organizationTypeModel,
             $user->currentAccessToken()->token
         );
     }

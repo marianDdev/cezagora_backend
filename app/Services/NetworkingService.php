@@ -12,6 +12,7 @@ use App\Models\Organization;
 use App\Models\User;
 use App\Notifications\ConnectionRequestAccepted;
 use App\Notifications\ConnectionRequestReceived;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 
@@ -24,20 +25,27 @@ class NetworkingService
         $this->organizationService = $organizationService;
     }
 
-    public function createConnectionRequest(int $organizationId): ConnectionRequestResource
+    /**
+     * @throws Exception
+     */
+    public function createConnectionRequest(int $receiverId): ConnectionRequestResource
     {
         /** @var User $authUser */
         $authUser         = Auth::user();
         $authOrganizationModel = $this->organizationService->getOrganizationByAuthUser();
+        $hasLists = $authOrganizationModel->getMedia('lists') !== null;
 
-        $receiverOrganization = Organization::find($organizationId);
-        $receiverUserId               = $receiverOrganization->user->id;
+        if (!$authOrganizationModel->organization->has_details_completed || !$hasLists) {
+            throw new Exception("you can't make connection request if you didn't add your compnay details or didn't upload stock lists." );
+        }
+
+        $receiverOrganization = Organization::find($receiverId);
         $receiverOrganizationModel = $this->organizationService->getOrganizationTypeModel($receiverOrganization);
 
         $data = [
-            'user_id'                => $receiverUserId,
-            'organization_id'      => $authUser->organization->id,
-            'organization_type' => $authUser->organization->type,
+            'receiver_id'                => $receiverId,
+            'requester_id'      => $authUser->organization->id,
+            'requester_type' => $authUser->organization->type,
             'name' => $authOrganizationModel->name
         ];
 

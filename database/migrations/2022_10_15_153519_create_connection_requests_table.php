@@ -20,10 +20,10 @@ return new class extends Migration
     {
         Schema::create('connection_requests', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id');
-            $table->foreignId('organization_id');
-            $table->enum('organization_type', Organization::TYPES);
-            $table->string('name');
+            $table->foreignId('receiver_id');
+            $table->foreignId('requester_id');
+            $table->enum('requester_type', Organization::TYPES);
+            $table->string('requester_name');
             $table->timestamps();
         });
     }
