@@ -85,7 +85,9 @@ class SearchService
                         ->get();
 
         foreach ($collection as $item) {
+            $organization_type = substr_replace($tableName ,"",-1);
             $item->networking_status = $this->networkingService->getNetworkingStatusByOrganizationId($item->organization_id);
+            $item->organization_type = $organization_type;
         }
 
         return $collection;
