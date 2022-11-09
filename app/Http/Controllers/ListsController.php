@@ -7,11 +7,12 @@ use App\Services\OrganizationService;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class ListsController extends Controller
 {
-    public function listAll(OrganizationService $service): JsonResponse
+    public function listAll(OrganizationService $service): MediaCollection|JsonResponse
     {
         $organizationTypeModel = $service->getOrganizationByAuthUser();
 

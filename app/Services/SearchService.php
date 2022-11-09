@@ -19,20 +19,25 @@ class SearchService
 
     public function getAll(array $filters, ?int $limit = null): array|string
     {
-        $results = [
-            'manufacturers' => $this->getManufacturers($filters, $limit)->toArray(),
-            'distributors'  => $this->getDistributors($filters, $limit)->toArray(),
-            'retailers'     => $this->getRetailers($filters, $limit)->toArray(),
-            'wholesalers'   => $this->getWholesalers($filters, $limit)->toArray(),
-        ];
+        $results = [];
 
-        $lengths = [];
-
-        foreach ($results as $result) {
-            $lengths[] = count($result) === 0;
+        if ($this->getManufacturers($filters, $limit)->count() > 0) {
+            $results['manufacturers'] = $this->getManufacturers($filters, $limit)->toArray();
         }
 
-        if (!in_array(false, $lengths)) {
+        if ($this->getDistributors($filters, $limit)->count() > 0) {
+            $results['distributors'] = $this->getDistributors($filters, $limit)->toArray();
+        }
+
+        if ($this->getRetailers($filters, $limit)->count() > 0) {
+            $results['retailers'] = $this->getRetailers($filters, $limit)->toArray();
+        }
+
+        if ($this->getWholesalers($filters, $limit)->count() > 0) {
+            $results['wholesalers'] = $this->getWholesalers($filters, $limit)->toArray();
+        }
+
+        if (count($results) === 0) {
             return "No results";
         }
 
