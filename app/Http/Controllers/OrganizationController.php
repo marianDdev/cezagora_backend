@@ -4,16 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\UpdateOrganizationRequest;
 use App\Http\Requests\UploadListRequest;
-use App\Services\MediaService;
+use App\Models\Organization;
+use App\Services\NetworkingService;
 use App\Services\OrganizationService;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Exception;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Resources\Json\JsonResource;
 
 class OrganizationController extends Controller
 {
     public function update(UpdateOrganizationRequest $request, OrganizationService $service)
     {
+        //check if auth user is distributor, retailer, manufacturer or wholesaler
         $organizationTypeModel = $service->getOrganizationByAuthUser();
 
         if (!is_null($organizationTypeModel)) {
@@ -26,49 +28,24 @@ class OrganizationController extends Controller
         );
     }
 
-    public function getLists(OrganizationService $service)
+    /**
+     * @throws Exception
+     */
+    public function getOrganizationTypeModelByOrganizationId(
+        OrganizationService $service,
+        NetworkingService $networkingService,
+        int $organizationId
+    ): ?JsonResource
     {
-        $organizationTypeModel = $service->getOrganizationByAuthUser();
+        $organization = Organization::find($organizationId);
+        $modelResource = $service->getModelResource($organization);
 
-        if (!is_null($organizationTypeModel)) {
-           return $organizationTypeModel->getMedia('lists');
-        }
+        $model = $service->getOrganizationTypeModel($organization);
+        $networkingStatus = $networkingService->getNetworkingStatusByOrganizationId($organization->id);
+        $lists = $model->getMedia('lists');
 
-        return response()->json(
-            ['You are not allowed to update this organization'],
-            401
-        );
-    }
+        $data = array_merge($model->toArray(), ['networking_status' => $networkingStatus, 'lists' => $lists]);
 
-    public function uploadNewList(Request $request, MediaService $mediaService): JsonResponse
-    {
-        $mediaService->uploadList($request);
-
-        return response()->json(
-            [
-                'message' => 'Successfully uploaded.',
-            ]
-        );
-    }
-
-    public function deletList(string $uuid): JsonResponse
-    {
-        $list = Media::findByUuid($uuid);
-
-
-        if (!is_null($list)) {
-            $model = $list->model;
-
-            $list->delete();
-
-            if (count($model->getMedia('lists')) === 0) {
-                $model->has_list_uploaded = false;
-                $model->save();
-            }
-
-            return response()->json(['successfully deleted']);
-        }
-
-        return response()->json(["you can't delete this file."], 401);
+        return new $modelResource($data);
     }
 }
