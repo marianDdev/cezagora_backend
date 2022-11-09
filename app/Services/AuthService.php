@@ -41,7 +41,7 @@ class AuthService
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
-        $organizationModel = $this->organizationService->getOrganizationType($organization);
+        $organizationModel = $this->organizationService->getOrganizationTypeClassName($organization);
         $organizationType  = $organizationModel::create(
             [
                 'organization_id'     => $organization->id,

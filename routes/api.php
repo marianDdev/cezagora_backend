@@ -10,6 +10,7 @@ use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\ConnectionRequestController;
 use App\Http\Controllers\FollowerController;
 use App\Http\Controllers\FollowingController;
+use App\Http\Controllers\ListsController;
 use App\Http\Controllers\NetworkingController;
 use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\ProductsCategoryController;
@@ -33,14 +34,15 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::group(
         ['prefix' => '/organization'],
         function () {
+            Route::get('/{organizationId}', [OrganizationController::class, 'getOrganizationTypeModelByOrganizationId'])->name('get.organization_type_model');
             Route::patch('/details', [OrganizationController::class, 'update'])->name('organization.update_details');
 
             Route::group(
                 ['prefix' => '/lists'],
                 function () {
-                    Route::get('/', [OrganizationController::class, 'getLists'])->name('organization.get_lists');
-                    Route::post('/upload', [OrganizationController::class, 'uploadNewList'])->name('organization.upload_file');
-                    Route::delete('/{uuid}', [OrganizationController::class, 'deletList'])->name('organization.delete_file');
+                    Route::get('/', [ListsController::class, 'listAll'])->name('organization.get_lists');
+                    Route::post('/upload', [ListsController::class, 'upload'])->name('organization.upload_file');
+                    Route::delete('/{uuid}', [ListsController::class, 'delete'])->name('organization.delete_file');
                 }
             );
         }

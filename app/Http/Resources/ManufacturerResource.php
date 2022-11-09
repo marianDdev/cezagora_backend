@@ -16,6 +16,7 @@ class ManufacturerResource extends JsonResource
     public function toArray($request)
     {
         return [
+            'id'                  => $this->id,
             'organization_id'     => $this->organization_id,
             'name'                => $this->name,
             'email'               => $this->email,
@@ -25,7 +26,10 @@ class ManufacturerResource extends JsonResource
             'city'                => $this->city,
             'address'             => $this->address,
             'products_categories' => $this->products_categories,
-            'has_list_uploaded'  => $this->has_list_uploaded,
+            'has_list_uploaded'   => $this->has_list_uploaded,
+            'organization_type'   => $this->organization->type,
+            'networking_status'   => $this->networking_status ?? null,
+            'lists'               => $this->getMedia('lists'),
         ];
     }
 }

@@ -12,14 +12,14 @@ use Illuminate\Validation\Rule;
 
 class OrganizationService
 {
-    public function getOrganizationType(Organization $organization): string
+    public function getOrganizationTypeClassName(Organization $organization): string
     {
         return 'App\Models\\' . ucfirst($organization->type);
     }
 
     public function getOrganizationTypeModel(Organization $organization): ?Model
     {
-        $organizationType = $this->getOrganizationType($organization);
+        $organizationType = $this->getOrganizationTypeClassName($organization);
 
         return $organizationType::where('organization_id', $organization->id)->first();
     }
