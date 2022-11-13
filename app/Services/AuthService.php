@@ -49,11 +49,7 @@ class AuthService
         return $this->responseData($user, $organization, $token);
     }
 
-    public function responseData(
-        User         $user,
-        Organization $organization,
-        string       $token
-    ): array
+    public function responseData(User $user, Organization $organization, string $token): array
     {
         $authData = [
             'organization'      => $organization,
