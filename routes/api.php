@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\AuthenticationController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\ConnectionRequestController;
 use App\Http\Controllers\FollowerController;
 use App\Http\Controllers\FollowingController;
@@ -75,6 +76,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/networking/status/{organizationId}', [NetworkingController::class, 'getStatusByOrganizationId'])->name('networking_status.by_organization_id');
 
     Route::get('/user_data', [UserController::class, 'getAutUserData'])->name('auth_user.data');
+
+    //chat
+
+    Route::get('/threads', [ChatController::class, 'getMyThreads'])->name('chat.list_messages');
+    Route::post('/messages', [ChatController::class, 'sendMessage'])->name('chat.post_message');
 });
 
 Route::get('/products_categories', [ProductsCategoryController::class, 'get'])->name('products_categories.get');

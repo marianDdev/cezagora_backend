@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
@@ -70,4 +71,13 @@ class Organization extends Model
         return $this->hasMany(ConnectionRequest::class, 'receiver_id', 'id');
     }
 
+    public function threads(): BelongsToMany
+    {
+        return $this->belongsToMany(Organization::class);
+    }
+
+    public function messages(): HasMany
+    {
+        return $this->hasMany(Message::class);
+    }
 }
