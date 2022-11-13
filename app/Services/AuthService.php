@@ -23,6 +23,11 @@ class AuthService
             [
                 'type'                  => $validated['organization_type'],
                 'number_of_users'       => 1,
+                'name'                => $validated['organization_name'],
+                'email'               => $validated['organization_email'],
+                'phone'               => $validated['organization_phone'],
+                'products_categories' => [],
+                'has_list_uploaded'   => false,
                 'has_details_completed' => false,
             ]
         );
@@ -41,32 +46,18 @@ class AuthService
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
-        $organizationModel = $this->organizationService->getOrganizationTypeClassName($organization);
-        $organizationType  = $organizationModel::create(
-            [
-                'organization_id'     => $organization->id,
-                'name'                => $validated['organization_name'],
-                'email'               => $validated['organization_email'],
-                'phone'               => $validated['organization_phone'],
-                'products_categories' => [],
-                'has_list_uploaded'   => false,
-            ]
-        );
-
-        return $this->responseData($user, $organization, $organizationType, $token);
+        return $this->responseData($user, $organization, $token);
     }
 
     public function responseData(
         User         $user,
         Organization $organization,
-        Model        $organizationType,
         string       $token
     ): array
     {
         $authData = [
             'organization'      => $organization,
             'user'              => $user,
-            'organization_type' => $organizationType,
         ];
 
         return [

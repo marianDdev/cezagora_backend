@@ -31,7 +31,6 @@ class AuthenticationController extends Controller
     public function login(
         Request $request,
         AuthService $authService,
-        OrganizationService $organizationService
     ): array|JsonResponse {
         if (!Auth::attempt($request->only('email', 'password'))) {
             return response()->json([
@@ -42,8 +41,8 @@ class AuthenticationController extends Controller
         $user = User::where('email', $request['email'])->firstOrFail();
 
         $token = $user->createToken('auth_token')->plainTextToken;
-        $userOrganization = $organizationService->getOrganizationTypeModel($user->organization);
+        $userOrganization = $user->organization;
 
-        return $authService->responseData($user, $user->organization, $userOrganization, $token);
+        return $authService->responseData($user, $userOrganization, $token);
     }
 }
