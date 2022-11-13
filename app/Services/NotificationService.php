@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Organization;
+use App\Models\User;
 use App\Notifications\ConnectionRequestReceived;
 
 class NotificationService
@@ -14,16 +15,15 @@ class NotificationService
         $this->organizationService = $organizationService;
     }
 
-    public function notifyAboutConnectionRequestReceived($authUser, $receiverOrganizationId): void
+    public function notifyAboutConnectionRequestReceived(int $receiverOrganizationId): void
     {
         $receiverOrganization      = Organization::find($receiverOrganizationId);
-        $receiverOrganizationModel = $this->organizationService->getOrganizationTypeModel($receiverOrganization);
-        $authOrganizationModel = $this->organizationService->getOrganizationByAuthUser();
+        $authOrganization = $this->organizationService->getAuthOrganization();
 
         $email = [
-            'receiver'           => $receiverOrganizationModel->name,
-            'requester_org_type' => $authUser->organization->type,
-            'requester_org_name' => $authOrganizationModel->name,
+            'receiver'           => $receiverOrganization->name,
+            'requester_org_type' => $authOrganization->type,
+            'requester_org_name' => $authOrganization->name,
         ];
 
         $receiverOrganization->user->notify(new ConnectionRequestReceived($email));

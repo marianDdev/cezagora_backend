@@ -14,12 +14,9 @@ class UserController extends Controller
         /** @var User $user */
         $user = Auth::user();
 
-        $organizationTypeModel = $organizationService->getOrganizationByAuthUser();
-
         return $service->responseData(
             $user,
             $user->organization,
-            $organizationTypeModel,
             $user->currentAccessToken()->token
         );
     }

@@ -31,25 +31,23 @@ class NetworkingService
      */
     public function createConnectionRequest(int $receiverOrganizationId): ConnectionRequestResource
     {
-        /** @var User $authUser */
-        $authUser              = Auth::user();
-        $authOrganizationModel = $this->organizationService->getOrganizationByAuthUser();
-        $hasLists              = $authOrganizationModel->getMedia('lists') !== null;
+        $authOrg = $this->organizationService->getAuthOrganization();
+        $hasLists              = $authOrg->getMedia('lists') !== null;
 
-        if (!$authOrganizationModel->organization->has_details_completed || !$hasLists) {
+        if (!$authOrg->has_details_completed || !$hasLists) {
             throw new Exception("you can't make connection request if you didn't add your company details or didn't upload stock lists.");
         }
 
         $data = [
             'receiver_organization_id'  => $receiverOrganizationId,
-            'requester_organization_id' => $authUser->organization->id,
+            'requester_organization_id' => $authOrg->id,
         ];
 
         $newConnectionRequest = ConnectionRequest::create($data);
 
         $this->follow($receiverOrganizationId);
 
-        $this->notificationService->notifyAboutConnectionRequestReceived($authUser, $receiverOrganizationId);
+        $this->notificationService->notifyAboutConnectionRequestReceived($receiverOrganizationId);
 
         return new ConnectionRequestResource($newConnectionRequest);
     }
@@ -65,28 +63,27 @@ class NetworkingService
     public function acceptConnectionRequest(int $connectionRequestid): ConnectionResource|JsonResponse
     {
         /** @var User $authUser */
-        $authUser              = Auth::user();
+        $authUser = Auth::user();
+        $authOrg = $this->organizationService->getAuthOrganization();
         $connectionRequest     = ConnectionRequest::find($connectionRequestid);
         $requesterOrganization = Organization::find($connectionRequest->requester_organization_id);
 
-        if ($connectionRequest->receiver_organization_id !== $authUser->organization->id) {
+        if ($connectionRequest->receiver_organization_id !== $authOrg->id) {
             return response()->json(['You are now allowed to accept this connection request.'], 401);
         }
 
         $connection = $this->createConnection(
             [
-                'organization_id'           => $authUser->organization->id,
+                'organization_id'           => $authOrg->id,
                 'connected_organization_id' => $requesterOrganization->id,
             ]
         );
 
-        $authOrganizationModel      = $this->organizationService->getOrganizationByAuthUser();
-        $requesterOrganizationModel = $this->organizationService->getOrganizationTypeModel($requesterOrganization);
 
         $email = [
-            'receiver'          => $requesterOrganizationModel->name,
-            'organization_type' => $authUser->organization->type,
-            'organization_name' => $authOrganizationModel->name,
+            'receiver'          => $requesterOrganization->name,
+            'organization_type' => $authOrg->type,
+            'organization_name' => $authOrg->name,
         ];
 
 
@@ -98,9 +95,7 @@ class NetworkingService
 
     public function follow(int $followedOrganizationId): void
     {
-        /** @var User $user */
-        $user                   = Auth::user();
-        $followerOrganizationid = $user->organization->id;
+        $followerOrganizationid = $this->organizationService->getAuthOrganization()->id;
 
         Follower::create(
             [
@@ -118,9 +113,8 @@ class NetworkingService
         if (Organization::find($organizationId) === null) {
             throw new Exception('This is not a valid organization.');
         }
-        /** @var User $authUser */
-        $authUser           = Auth::user();
-        $authOrganizationId = $authUser->organization->id;
+
+        $authOrganizationId = $this->organizationService->getAuthOrganization()->id;
 
         return [
             'connection_requested' => $this->isConnectionRequested($authOrganizationId, $organizationId),
