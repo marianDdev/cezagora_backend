@@ -17,7 +17,7 @@ class AuthService
         $this->organizationService = $organizationService;
     }
 
-    public function register(array $validated): array
+    public function register(array $validated): int
     {
         $organization = Organization::create(
             [
@@ -44,9 +44,7 @@ class AuthService
             ]
         );
 
-        $token = $user->createToken('auth_token')->plainTextToken;
-
-        return $this->responseData($user, $organization, $token);
+        return $user->id;
     }
 
     public function responseData(User $user, Organization $organization, string $token): array
