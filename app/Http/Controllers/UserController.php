@@ -4,12 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Services\AuthService;
-use App\Services\OrganizationService;
 use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
-    public function getAutUserData(AuthService $service, OrganizationService $organizationService): array
+    public function getAutUserData(AuthService $service): array
     {
         /** @var User $user */
         $user = Auth::user();
