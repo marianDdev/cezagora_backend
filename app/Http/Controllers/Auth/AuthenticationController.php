@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\RegisterRequest;
 use App\Models\User;
 use App\Services\AuthService;
-use App\Services\OrganizationService;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -19,13 +18,16 @@ class AuthenticationController extends Controller
         AuthService $authService
     ): array
     {
-        $authData = $authService->register($request->validated());
+        $userId = $authService->register($request->validated());
+        $user = User::find($userId);
+        event(new Registered($user));
 
-        event(new Registered($authData['data']['user']));
+        Auth::login($user);
 
-        Auth::login($authData['data']['user']);
+        $userOrganization = $user->organization;
+        $token = $user->createToken('auth_token')->plainTextToken;
 
-        return $authData;
+        return $authService->responseData($user, $userOrganization, $token);
     }
 
     public function login(
