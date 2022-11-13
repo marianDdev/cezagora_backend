@@ -34,7 +34,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::group(
         ['prefix' => '/organization'],
         function () {
-            Route::get('/organization_type/{organizationId}', [OrganizationController::class, 'getOrganizationTypeModelByOrganizationId'])->name('get.organization_type_model');
             Route::patch('/details', [OrganizationController::class, 'update'])->name('organization.update_details');
 
             Route::group(
@@ -53,7 +52,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         ['prefix' => '/search'],
         function () {
             Route::get('/all', [SearchController::class, 'searchAll'])->name('search.all');
-            Route::get('/companies', [SearchController::class, 'searchByCompanies'])->name('search.companies');
+            Route::get('/companies', [SearchController::class, 'searchByType'])->name('search.companies');
         }
     );
 

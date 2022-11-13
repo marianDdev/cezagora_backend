@@ -18,6 +18,18 @@ return new class extends Migration
             $table->id();
             $table->enum('type', Organization::TYPES);
             $table->integer('number_of_users')->default(1);
+            $table->string('name');
+            $table->string('email')->unique();
+            $table->string('phone');
+            $table->enum('continent', Organization::CONTINENTS)->nullable();
+            $table->string('country')->nullable();
+            $table->string('city')->nullable();
+            $table->text('address')->nullable();
+            $table->json('products_categories')->nullable();
+            $table->json('selling_methods')->nullable();
+            $table->enum('marketplaces', Organization::MARKETPLACES)->nullable();
+            $table->boolean('has_list_uploaded')->default(false);
+            $table->boolean('has_details_completed')->default(false);
             $table->timestamps();
         });
     }

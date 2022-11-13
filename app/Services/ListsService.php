@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Models\Organization;
 use Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class ListsService
 {
@@ -18,8 +17,7 @@ class ListsService
     public function getListsByOrganizationId(int $organizationId): MediaCollection
     {
         $organization = Organization::find($organizationId);
-        $orgTypeModel = $this->organizationService->getOrganizationTypeModel($organization);
 
-        return $orgTypeModel->getMedia('lists');
+        return $organization->getMedia('lists');
     }
 }

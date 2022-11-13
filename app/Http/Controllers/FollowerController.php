@@ -2,17 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use App\Services\NetworkingService;
-use Illuminate\Support\Facades\Auth;
 
 class FollowerController extends Controller
 {
-    public function follow(NetworkingService $networkingService)
+    public function follow(NetworkingService $networkingService, int $followedOrganizationId)
     {
-        /** @var User $authUser */
-        $authUser = Auth::user();
-
-        return $networkingService->follow($authUser->organization->id);
+        return $networkingService->follow($followedOrganizationId);
     }
 }
