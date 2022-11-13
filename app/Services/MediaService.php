@@ -22,15 +22,14 @@ class MediaService
      */
     public function uploadList(Request $request): JsonResponse
     {
-        $organizationTypeModel = $this->organizationService->getOrganizationByAuthUser();
-
+        $authOrg = $this->organizationService->getAuthOrganization();
         if ($request->hasFile('list') && $request->file('list')->isValid()) {
             /** @var Media $media */
-            $media = $organizationTypeModel->addMediaFromRequest('list')
+            $media = $authOrg->addMediaFromRequest('list')
                                   ->toMediaCollection('lists');
 
-            $organizationTypeModel->has_list_uploaded = true;
-            $organizationTypeModel->save();
+            $authOrg->has_list_uploaded = true;
+            $authOrg->save();
 
             Storage::disk('cezagora_react')->put($media->file_name, $media->stream());
         } else {

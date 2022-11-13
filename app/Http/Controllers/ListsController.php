@@ -12,18 +12,11 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class ListsController extends Controller
 {
-    public function listAll(OrganizationService $service): MediaCollection|JsonResponse
+    public function listAll(OrganizationService $service): MediaCollection
     {
-        $organizationTypeModel = $service->getOrganizationByAuthUser();
+        $authorg = $service->getAuthOrganization();
 
-        if (!is_null($organizationTypeModel)) {
-            return $organizationTypeModel->getMedia('lists');
-        }
-
-        return response()->json(
-            ['You are not allowed to update this organization'],
-            401
-        );
+        return $authorg->getMedia('lists');
     }
 
     /**
