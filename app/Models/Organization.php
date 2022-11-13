@@ -115,4 +115,8 @@ class Organization extends Model
         return $this->hasMany(ConnectionRequest::class, 'receiver_id', 'id');
     }
 
+    public function hasAttribute(string $key): bool
+    {
+        return array_key_exists($key, $this->getAttributes());
+    }
 }

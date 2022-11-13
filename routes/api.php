@@ -34,7 +34,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::group(
         ['prefix' => '/organization'],
         function () {
-            Route::get('/organization_type/{organizationId}', [OrganizationController::class, 'getOrganizationTypeModelByOrganizationId'])->name('get.organization_type_model');
             Route::patch('/details', [OrganizationController::class, 'update'])->name('organization.update_details');
 
             Route::group(

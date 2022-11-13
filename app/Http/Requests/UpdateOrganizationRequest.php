@@ -27,8 +27,8 @@ class UpdateOrganizationRequest extends FormRequest
             'city' => ['nullable', 'string'],
             'address' => ['nullable', 'string'],
             'products_categories' => ['nullable', 'array', Rule::in(ProductsCategory::CATEGORIES)],
-            'selling_methods' => ['nullable', 'array', Rule::in(Retailer::SELLING_METHODS)],
-            'marketplaces' => ['nullable', 'array', Retailer::MARKETPLACES],
+            'selling_methods' => ['nullable', 'array', Rule::in(Organization::SELLING_METHODS)],
+            'marketplaces' => ['nullable', 'array', Organization::MARKETPLACES],
         ];
     }
 }
