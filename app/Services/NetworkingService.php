@@ -98,9 +98,7 @@ class NetworkingService
 
     public function follow(int $followedOrganizationId): void
     {
-        /** @var User $user */
-        $user                   = Auth::user();
-        $followerOrganizationid = $user->organization->id;
+        $followerOrganizationid = $this->organizationService->getAuthOrganization()->id;
 
         Follower::create(
             [
@@ -118,9 +116,8 @@ class NetworkingService
         if (Organization::find($organizationId) === null) {
             throw new Exception('This is not a valid organization.');
         }
-        /** @var User $authUser */
-        $authUser           = Auth::user();
-        $authOrganizationId = $authUser->organization->id;
+
+        $authOrganizationId = $this->organizationService->getAuthOrganization()->id;
 
         return [
             'connection_requested' => $this->isConnectionRequested($authOrganizationId, $organizationId),

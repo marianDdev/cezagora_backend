@@ -5,23 +5,36 @@ namespace App\Http\Controllers;
 use App\Services\SearchService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 
 class SearchController extends Controller
 {
-    public function searchAll(Request $request, SearchService $searchService): array|string
+    public function searchAll(Request $request, SearchService $searchService): Collection|JsonResponse
     {
-        return $searchService->getAll($request->all());
+
+        $collection = $searchService->getAll($request->all());
+
+        if ($collection->count() === 0) {
+            return response()->json('No results found');
+        }
+
+        return $collection;
     }
 
-    public function searchByCompanies(Request $request, SearchService $searchService): JsonResponse
+    public function searchByType(Request $request, SearchService $searchService): Collection|JsonResponse
     {
         $companyType = $request->get('company_type');
 
         if (is_null($companyType)) {
-            return response()->json(['Please add a compnay type.'], 401);
+            return response()->json(['Please add a company type.'], 401);
         }
-        $composedMethodName = 'get' . ucfirst($companyType);
 
-        return $searchService->$composedMethodName($request->all());
+        $collection = $searchService->getAll($request->all());
+
+        if ($collection->count() === 0) {
+            return response()->json('No results found');
+        }
+
+        return $collection;
     }
 }

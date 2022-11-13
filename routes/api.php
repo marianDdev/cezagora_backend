@@ -52,7 +52,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         ['prefix' => '/search'],
         function () {
             Route::get('/all', [SearchController::class, 'searchAll'])->name('search.all');
-            Route::get('/companies', [SearchController::class, 'searchByCompanies'])->name('search.companies');
+            Route::get('/companies', [SearchController::class, 'searchByType'])->name('search.companies');
         }
     );
 
