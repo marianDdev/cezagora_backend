@@ -122,6 +122,7 @@ class Organization extends Model implements HasMedia
     {
         return array_key_exists($key, $this->getAttributes());
     }
+
     public function threads(): BelongsToMany
     {
         return $this->belongsToMany(Organization::class);
@@ -130,5 +131,10 @@ class Organization extends Model implements HasMedia
     public function messages(): HasMany
     {
         return $this->hasMany(Message::class);
+    }
+
+    public function posts()
+    {
+        return $this->hasMany(Post::class, 'author_organization_id', 'id');
     }
 }

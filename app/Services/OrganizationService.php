@@ -11,6 +11,14 @@ use Illuminate\Validation\Rule;
 
 class OrganizationService
 {
+    public function getAuthOrganization(): Organization
+    {
+        /** @var User $authUser */
+        $authUser = Auth::user();
+
+        return $authUser->organization;
+    }
+
     public function update(Organization $organization, array $validated): void
     {
         $this->validateRequiredMarketPlace($validated);
@@ -23,15 +31,6 @@ class OrganizationService
 
         $organization->save();
         $this->updateHasDetailsCompleted($organization);
-    }
-
-
-    public function getAuthOrganization(): Organization
-    {
-        /** @var User $authUser */
-        $authUser = Auth::user();
-
-        return $authUser->organization;
     }
 
     private function validateRequiredMarketPlace(array $validated): void

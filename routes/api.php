@@ -14,6 +14,7 @@ use App\Http\Controllers\FollowingController;
 use App\Http\Controllers\ListsController;
 use App\Http\Controllers\NetworkingController;
 use App\Http\Controllers\OrganizationController;
+use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProductsCategoryController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\UserController;
@@ -71,16 +72,29 @@ Route::middleware(['auth:sanctum'])->group(function () {
             );
         }
     );
-
     Route::post('/{organizationId}/follow', [FollowerController::class, 'follow'])->name('follow.create');
     Route::get('/networking/status/{organizationId}', [NetworkingController::class, 'getStatusByOrganizationId'])->name('networking_status.by_organization_id');
 
+    //auth user data
     Route::get('/user_data', [UserController::class, 'getAutUserData'])->name('auth_user.data');
 
     //chat
-
     Route::get('/threads', [ChatController::class, 'getMyThreads'])->name('chat.list_messages');
     Route::post('/messages', [ChatController::class, 'sendMessage'])->name('chat.post_message');
+
+    //posts
+    Route::group(
+        ['prefix' => '/posts'],
+        function () {
+            Route::get('/{id}', [PostController::class, 'getOne'])->name('posts.get_one');
+            Route::get('/', [PostController::class, 'list'])->name('posts.list');
+            Route::get('/my/posts', [PostController::class, 'myPosts'])->name('posts.my_posts_list');
+            Route::post('/', [PostController::class, 'create'])->name('post.create');
+            Route::patch('/{id}', [PostController::class, 'update'])->name('post.update');
+            Route::post('/replace/media', [PostController::class, 'replacePostMedia'])->name('post.replace_media');
+            Route::delete('/{id}', [PostController::class, 'delete'])->name('post.delete');
+        }
+    );
 });
 
 Route::get('/products_categories', [ProductsCategoryController::class, 'get'])->name('products_categories.get');
