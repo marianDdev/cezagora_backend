@@ -8,6 +8,7 @@ use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\AuthenticationController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ConnectionRequestController;
 use App\Http\Controllers\FollowerController;
 use App\Http\Controllers\FollowingController;
@@ -91,8 +92,18 @@ Route::middleware(['auth:sanctum'])->group(function () {
             Route::get('/my/posts', [PostController::class, 'myPosts'])->name('posts.my_posts_list');
             Route::post('/', [PostController::class, 'create'])->name('post.create');
             Route::patch('/{id}', [PostController::class, 'update'])->name('post.update');
-            Route::post('/replace/media', [PostController::class, 'replacePostMedia'])->name('post.replace_media');
             Route::delete('/{id}', [PostController::class, 'delete'])->name('post.delete');
+        }
+    );
+
+    Route::group(
+        ['prefix' => '/comments'],
+        function () {
+            Route::get('/{id}', [CommentController::class, 'getOne'])->name('comments.get_one');
+            Route::get('/{postId}/list', [CommentController::class, 'list'])->name('comments.list');
+            Route::post('/', [CommentController::class, 'create'])->name('comments.create');
+            Route::patch('/{id}', [CommentController::class, 'update'])->name('comments.update');
+            Route::delete('/{id}', [CommentController::class, 'delete'])->name('comments.delete');
         }
     );
 });

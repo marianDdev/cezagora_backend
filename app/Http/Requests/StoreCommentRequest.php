@@ -2,10 +2,12 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Post;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
-class StorePostRequest extends FormRequest
+class StoreCommentRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -15,9 +17,9 @@ class StorePostRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title'      => ['required', 'string', 'max:128'],
+            'post_id' => ['required', 'integer', Rule::exists(Post::class, 'id')],
             'text'       => ['required', 'string', 'max:256'],
-            'post_media' => ['nullable', 'file'],
+            'comment_media' => ['nullable', 'file'],
         ];
     }
 }

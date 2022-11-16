@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ReplacePostMediaRequest;
 use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
 use App\Http\Resources\PostResource;
@@ -42,7 +41,10 @@ class PostController extends Controller
         $data    = array_merge($postRequest->validated(), ['author_organization_id' => $author->id]);
         $newPost = Post::create($data);
 
-        if (request()->hasFile('post_media') && request()->file('post_media')->isValid()) {
+        if (
+            $postRequest->hasFile('post_media')
+            && $postRequest->file('post_media')->isValid()
+        ) {
            $newPost->addMediaFromRequest('post_media')
                              ->toMediaCollection('post_media');
         }
@@ -56,6 +58,8 @@ class PostController extends Controller
         int $id
     ): PostResource|JsonResponse {
         $authOrg = $organizationService->getAuthOrganization();
+
+        /** @var Post $post */
         $post = Post::find($id) ?? abort(404, 'Post not found');
 
         if (!is_null($post)) {
@@ -65,36 +69,24 @@ class PostController extends Controller
         }
 
         foreach ($updatePostRequest->validated() as $column => $value) {
-            $post->$column = $value;
-        }
-
-        $post->save();
-
-        return new PostResource($post);
-    }
-
-    public function replacePostMedia(
-        ReplacePostMediaRequest $replacePostMediaRequest,
-        OrganizationService $organizationService
-    ): PostResource|JsonResponse {
-        $authOrg = $organizationService->getAuthOrganization();
-        $validated = $replacePostMediaRequest->validated();
-        $post = Post::find($validated['post_id']) ?? abort(404, 'Post not found');
-
-        if (!is_null($post)) {
-            if ($post->author->id !== $authOrg->id ) {
-                return response()->json('You should update only your posts.', 401);
+            if ($post->hasAttribute($column)) {
+                $post->$column = $value;
             }
         }
 
-        if (request()->hasFile('post_media') && request()->file('post_media')->isValid()) {
+        if (
+            $updatePostRequest->hasFile('post_media')
+            && $updatePostRequest->file('post_media')->isValid()
+        ) {
             foreach ($post->getMedia('post_media') as $mediItem) {
                 $mediItem->delete();
             }
 
             $post->addMediaFromRequest('post_media')
-                             ->toMediaCollection('post_media');
+                 ->toMediaCollection('post_media');
         }
+
+        $post->save();
 
         return new PostResource($post);
     }
