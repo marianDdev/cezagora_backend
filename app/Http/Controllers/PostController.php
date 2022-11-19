@@ -25,7 +25,7 @@ class PostController extends Controller
 
     public function list(): PostResourceCollection
     {
-        return new PostResourceCollection(Post::all());
+        return new PostResourceCollection(Post::orderBy('created_at', 'DESC')->get());
     }
 
     public function myPosts(OrganizationService $organizationService): PostResourceCollection
