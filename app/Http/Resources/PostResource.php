@@ -21,7 +21,8 @@ class PostResource extends JsonResource
             'title' => $this['title'],
             'text' => $this['text'],
             'media' => $this->getMedia('post_media') ?? null,
-            'created_at' => Carbon::parse($this->created_at)->format('Y-m-d')
+            'created_at' => Carbon::parse($this->created_at)->format('Y-m-d'),
+            'comments' => new CommentResourceCollection($this->comments)
         ];
     }
 }
