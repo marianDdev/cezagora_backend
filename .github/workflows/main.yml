@@ -15,9 +15,9 @@ jobs:
 
 
       - name: Create envfile
-        run: |
-          touch .env
-          echo "${{ secrets.ENV_FILE }}" > .env
+        run: touch .env
+      - name: Create envfile
+        run: echo "${{ secrets.ENV_FILE }}" > .env
 
       - name: Install Dependencies
         run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
