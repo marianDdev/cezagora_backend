@@ -13,9 +13,6 @@ jobs:
       - name: deploy
         uses: actions/checkout@v3
 
-      - name: oprimize
-        run: php artisan optimize
-
       - name: Copy to envfile
         run: cp .env.production .env
 
