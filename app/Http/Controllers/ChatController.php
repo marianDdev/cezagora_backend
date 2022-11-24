@@ -43,7 +43,7 @@ class ChatController extends Controller
 
         return response()->json(
             [
-                'status' => 'Message Sent!',
+                'status' => 'Message Sent.',
                 'message' => $message
             ]
         );
