@@ -1,0 +1,21 @@
+name: deploy_on_main
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deployment:
+    runs-on: ubuntu-latest
+    steps:
+      - name: deploy
+        uses: actions/checkout@v3
+
+      - name: Sync files
+        uses: sunshine.dreamhost.com
+        with:
+          server: ns1.dreamhost.com
+          username: ${{ secretes.ftp_username }}
+          password: ${{ secretes.ftp_password }}
+          server-dir: /home/cezagora/api.cezagora.com
