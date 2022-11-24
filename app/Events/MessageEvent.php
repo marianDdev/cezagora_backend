@@ -15,7 +15,10 @@ class MessageEvent implements ShouldBroadcast
     private string $message;
     private string $otherOrganizationId;
 
-    public function __construct(string $message, int $otherOrganizationId)
+    public function __construct(
+        string $message,
+        int $otherOrganizationId
+    )
     {
         $this->message = $message;
         $this->otherOrganizationId = $otherOrganizationId;
