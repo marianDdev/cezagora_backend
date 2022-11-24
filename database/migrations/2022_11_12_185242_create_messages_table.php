@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('messages', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('author _id');
+            $table->foreignId('author_id');
             $table->foreignId('thread_id');
             $table->string('body');
             $table->timestamps();
