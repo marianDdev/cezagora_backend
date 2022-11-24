@@ -13,10 +13,7 @@ jobs:
       - name: deploy
         uses: actions/checkout@v3
 
-
-      - name: Create envfile
-        run: touch .env
-      - name: Create envfile
+      - name: Copy to envfile
         run: echo "${{ secrets.ENV_FILE }}" > .env
       - name: Generate key
         run: php artisan key:generate
