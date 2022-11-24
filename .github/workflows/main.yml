@@ -24,7 +24,7 @@ jobs:
         run: php artisan migrate
 
       - name: Sync files
-        uses: sunshine.dreamhost.com
+        uses: SamKirkland/FTP-Deploy-Action@4.3.2
         with:
           server: ns1.dreamhost.com
           username: ${{ secrets.ftp_username }}
