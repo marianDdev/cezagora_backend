@@ -56,7 +56,4 @@ jobs:
           server: sunshine.dreamhost.com
           username: ${{ secrets.FTP_USERNAME}}
           password: ${{ secrets.FTP_PASSWORD}}
-#      - name: Generate key
-#        run: php artisan key:generate
-      - name: run migrations
-        run: php artisan migrate --force
+          script: php artisan migrsate --force
