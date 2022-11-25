@@ -11,8 +11,6 @@ jobs:
       - name: Get the latest code
         uses: actions/checkout@v3
       - uses: actions/setup-node@master
-      - name: Building the project
-        run: npm run production
       - name: Copy .env
         run: php -r "file_exists('.env') || copy('.env.production', '.env');"
       - name: Install Dependencies
