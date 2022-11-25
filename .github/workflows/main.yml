@@ -50,18 +50,14 @@ jobs:
       - name: deploy
         uses: actions/checkout@v3
 
-      - name: update node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16
-
       - name: Sync files
         uses: SamKirkland/FTP-Deploy-Action@4.3.2
         with:
-          server: ns1.dreamhost.com
-          username: ${{ secrets.ftp_username }}
-          password: ${{ secrets.ftp_password }}
+          server: api.cezagora.com
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
           server-dir: /home/cezagora/api.cezagora.com
+
 
       - name: enter project
         run: cd /home/cezagora/api.cezagora.com/cezagora_backend
