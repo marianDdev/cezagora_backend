@@ -54,7 +54,7 @@ jobs:
         #uses: SamKirkland/FTP-Deploy-Action@4.3.2
         uses: appleboy/ssh-action@master
         with:
-          host: sunshine.dreamhost.com
-          username: ${{ secrets.FTP_USERNAME}}
-          key: ${{ secrets.FTP_PASSWORD}}
-          script: php artisan migrsate --force
+          host: api.cezagora.com
+          username: cezagora
+          key: ${{ secrets.DREAMHOST_SSH_KEY}}
+          script: php artisan migrate --force
