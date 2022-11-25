@@ -21,7 +21,7 @@ jobs:
           server: sunshine.dreamhost.com
           username: ${{ secrets.FTP_USERNAME}}
           password: ${{ secrets.FTP_PASSWORD}}
-          server_dir: /home/cezagora_api/api.cezagora.com/
+          server-dir: /home/cezagora_api/api.cezagora.com/
       - name: Copy .env
         run: php -r "file_exists('.env') || copy('.env.production', '.env');"
       - name: Generate key
