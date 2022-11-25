@@ -1,11 +1,11 @@
-#name: deploy_on_main
-#
-#on:
-#  push:
-#    branches: [ "main" ]
-#  pull_request:
-#    branches: [ "main" ]
-#
+name: deploy_on_main
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
 #env:
 #  APP_NAME: Cezagora
 #  APP_EN: production
@@ -41,31 +41,37 @@
 #  PUSHER_PORT: 443
 #  PUSHER_SCHEME: https
 #  PUSHER_APP_CLUSTER: eu
-#
-#
-#jobs:
-#  deployment:
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: deploy
-#        uses: actions/checkout@v3
-#
-#      - name: Generate key
-#        run: php artisan key:generate
-#
-#      - name: Install Dependencies
-#        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
-#
-#      - name: Directory Permissions
-#        run: chmod -R 777 storage bootstrap/cache
-#
-#      - name: Run migrations
-#        run: php artisan migrate --force
-#
-#      - name: Sync files
-#        uses: SamKirkland/FTP-Deploy-Action@4.3.2
-#        with:
-#          server: ns1.dreamhost.com
-#          username: ${{ secrets.ftp_username }}
-#          password: ${{ secrets.ftp_password }}
-#          server-dir: /home/cezagora/api.cezagora.com
+
+
+jobs:
+  deployment:
+    runs-on: ubuntu-latest
+    steps:
+      - name: deploy
+        uses: actions/checkout@v3
+
+      - name: Sync files
+        uses: SamKirkland/FTP-Deploy-Action@4.3.2
+        with:
+          server: ns1.dreamhost.com
+          username: ${{ secrets.ftp_username }}
+          password: ${{ secrets.ftp_password }}
+          server-dir: /home/cezagora/api.cezagora.com
+
+      - name: enter project
+        run: cd /home/cezagora/api.cezagora.com/cezagora_backend
+
+      - name: create env file
+        run: cat ~/Users/marian_d_dev/dev/CEZIUS/cezagora_backend/.env.production | "touch .env cat >> .env"
+
+      - name: generate key
+        run: php artisan key:generate
+
+      - name: Install Dependencies
+        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+
+      - name: Directory Permissions
+        run: chmod -R 777 storage bootstrap/cache
+
+      - name: Run migrations
+        run: php artisan migrate --force
