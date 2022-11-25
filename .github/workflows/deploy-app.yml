@@ -1,0 +1,20 @@
+name: Deploy Cezagora API
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  create-deployment-artifacts:
+    name: create deployment artifacts
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Configure PHP 8
+        uses: shivammathur/setup@master
+        with:
+          php-version: 8.1
+          extensions: mbstring, ctype, fileinfo, openssl, PDO, bcmath, json, tokenizer, xml
