@@ -26,4 +26,4 @@ jobs:
 #      - name: Generate key
 #        run: php artisan key:generate
       - name: run migrations
-        run: php artisan migrate
+        run: php artisan migrate --force
