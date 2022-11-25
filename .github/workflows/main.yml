@@ -3,9 +3,6 @@ on:
   push:
     branches:
       - main
-services:
-  mysql:
-    image: mysql:5.7
 env:
   APP_NAME: Cezagora
   APP_ENV: production
@@ -47,8 +44,8 @@ jobs:
       - name: Get the latest code
         uses: actions/checkout@v3
       - uses: actions/setup-node@master
-      - name: Copy .env
-        run: php -r "file_exists('.env') || copy('.env.production', '.env');"
+#      - name: Copy .env
+#        run: php -r "file_exists('.env') || copy('.env.production', '.env');"
       - name: Install Dependencies
         run: composer update --ignore-platform-reqs
       - name: Directory Permissions
