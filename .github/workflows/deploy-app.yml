@@ -1,32 +1,52 @@
-name: Deploy Laravel Project on push
+#name: Deploy Laravel Project on push
+#on:
+#  push:
+#    branches:
+#      - main
+#jobs:
+#  web-deploy:
+#    name: Deploy
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Get the latest code
+#        uses: actions/checkout@v2.3.2
+#      - uses: actions/setup-node@master
+#      - name: Copy .env
+#        run: php -r "file_exists('.env') || copy('.env.production', '.env');"
+#      - name: Install Dependencies
+#        run: composer update --ignore-platform-reqs
+##      - name: Generate key
+##        run: php artisan key:generate
+#      - name: Generate storage link
+#        run: php artisan storage:link
+#      - name: Run migrations
+#        run: php artisan migrate --force
+#      - name: Directory Permissions
+#        run: chmod -R 777 storage bootstrap/cache
+#      - name: 📂 Sync files
+#        uses: SamKirkland/FTP-Deploy-Action@4.0.0
+#        with:
+#          server: api.cezagora.com
+#          username: ${{ secrets.FTP_USERNAME }}
+#          password: ${{ secrets.FTP_PASSWORD }}
+#          server-dir: /api
+
+name: remote ssh command
 on:
   push:
     branches:
-      - main
+      - 'main'
 jobs:
-  web-deploy:
-    name: Deploy
+
+  build:
+    name: Deploy on dev server
     runs-on: ubuntu-latest
     steps:
-      - name: Get the latest code
-        uses: actions/checkout@v2.3.2
-      - uses: actions/setup-node@master
-      - name: Copy .env
-        run: php -r "file_exists('.env') || copy('.env.production', '.env');"
-      - name: Install Dependencies
-        run: composer update --ignore-platform-reqs
-#      - name: Generate key
-#        run: php artisan key:generate
-      - name: Generate storage link
-        run: php artisan storage:link
-      - name: Run migrations
-        run: php artisan migrate --force
-      - name: Directory Permissions
-        run: chmod -R 777 storage bootstrap/cache
-      - name: 📂 Sync files
-        uses: SamKirkland/FTP-Deploy-Action@4.0.0
+      - name: deploy new build on dev server
+        uses: appleboy/ssh-action@master
         with:
-          server: api.cezagora.com
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          server-dir: /
+          host: api.cezagora.com
+          username: cezagora_api (username for ssh)
+          key: qeTqAapgyx8AK95#
+          port: 22
+          script: whoami && cd www/cezagora/api && git checkout . && git pull && composer update  --no-progress -n  && php artisan -q migrate
