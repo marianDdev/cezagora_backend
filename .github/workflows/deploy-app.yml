@@ -1,56 +1,32 @@
-name: Deploy Cezagora API
-
+name: Deploy Laravel Project on push
 on:
   push:
     branches:
       - main
-
 jobs:
-  create-deployment-artifacts:
-    name: create deployment artifacts
+  web-deploy:
+    name: Deploy
     runs-on: ubuntu-latest
-    outputs:
-      deployment-matrix: ${{ steps.export-deployment-matrix.outputs.deployment-matrix }}
-
     steps:
-      - uses: actions/checkout@v3
-
-      - name: Configure PHP 8
-        uses: shivammathur/setup-php@v2
+      - name: Get the latest code
+        uses: actions/checkout@v2.3.2
+      - uses: actions/setup-node@master
+      - name: Copy .env
+        run: php -r "file_exists('.env') || copy('.env.production', '.env');"
+      - name: Install Dependencies
+        run: composer update --ignore-platform-reqs
+      - name: Generate key
+        run: php artisan key:generate
+      - name: Generate storage link
+        run: php artisan storage:link
+      - name: Run migrations
+        run: php artisan migrate --force
+      - name: Directory Permissions
+        run: chmod -R 777 storage bootstrap/cache
+      - name: 📂 Sync files
+        uses: SamKirkland/FTP-Deploy-Action@4.0.0
         with:
-          php-version: 8.1
-          extensions: mbstring, ctype, fileinfo, openssl, PDO, bcmath, json, tokenizer, xml
-
-      - name: Install composer
-        run: composer install --no-dev --no-interaction --prefer-dist
-
-      - name: create deployment artifact
-        run: tar -czf "${{ github.sha }}".tar.gz --exclude=*.git --exclude=node_modules *
-
-      - name: Store artifact for distribution
-        uses: actions/upload-artifact@v2
-        with:
-          name: app-build
-          path: ${{ github.sha }}.tar.gz
-
-      - name: Export deployment matrix
-        id: export-deplyment-matrix
-        run: |
-          JSON="$(cat ./deployment-config.json)"
-          JSON="${JSON//'%'/'%25'}"
-          JSON="${JSON//$'\n'/'%0A'}"
-          JSON="${JSON//$'\r'/'%0D'}"
-          echo "::set-output name=deployment-matrix::$JSON"
-
-  prepare-release-on-server:
-    runs-on: ubuntu-latest
-    needs: create-deployment-artifacts
-    strategy:
-      matrix:
-        server: ${{ fromJson(needs.create-deployment-artifacts.outputs.deployment-matrix) }}
-
-    steps:
-      - uses: actions/download-artifact@v2
-        with:
-          name: app-build
-
+          server: api.cezagora.com
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: /
