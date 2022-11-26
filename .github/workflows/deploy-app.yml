@@ -25,4 +25,4 @@ jobs:
           server: sunshine.dreamhost.com
           username: ${{ secrets.FTP_USERNAME}}
           password: ${{ secrets.FTP_PASSWORD}}
-          server_dir: /api
+          serverdir: /api
