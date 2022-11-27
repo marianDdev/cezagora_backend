@@ -141,3 +141,7 @@ Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
 Route::get('/raspuns', function () {
     return 'uite si raspunsul';
 });
+
+Route::post('/ceva', function () {
+    return 'ceva asa si asa';
+});
