@@ -14,6 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('organization_thread', function (Blueprint $table) {
+            $table->id();
             $table->foreignId('organization_id');
             $table->foreignId('thread_id');
         });
