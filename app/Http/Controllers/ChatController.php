@@ -23,7 +23,7 @@ class ChatController extends Controller
                      ->get();
     }
 
-    public function getMessagesByOtherOrganizationId(int $otherOrganizationId, ChatService $chatService)
+    public function getMessagesByOtherOrganizationId(int $otherOrganizationId, ChatService $chatService): void
     {
         $authOrganizationId = $this->authOrganization()->id;
         $thread = $chatService->createThread($authOrganizationId, $otherOrganizationId);
