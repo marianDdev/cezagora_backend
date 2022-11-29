@@ -39,6 +39,7 @@ class PostController extends Controller
     {
         $author  = $organizationService->getAuthOrganization();
         $data    = array_merge($postRequest->validated(), ['author_organization_id' => $author->id]);
+        /** @var Post $newPost */
         $newPost = Post::create($data);
 
         if (

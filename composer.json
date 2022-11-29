@@ -13,6 +13,7 @@
         "laravel/framework": "^9.19",
         "laravel/sanctum": "^2.8",
         "laravel/tinker": "^2.7",
+        "league/flysystem-aws-s3-v3": "^3.10",
         "pusher/pusher-php-server": "^7.2",
         "spatie/laravel-medialibrary": "^10.0.0",
         "tightenco/ziggy": "^1.0"
