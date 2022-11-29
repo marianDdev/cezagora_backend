@@ -31,7 +31,7 @@ class MediaService
             $authOrg->has_list_uploaded = true;
             $authOrg->save();
 
-            Storage::disk('cezagora_react')->put($media->file_name, $media->stream());
+            Storage::disk('do')->put(sprintf('lists/%s', $media->file_name), $media->stream());
         } else {
             throw new Exception('Your list was not uploaded.');
         }

@@ -56,6 +56,16 @@ return [
             'throw' => false,
         ],
 
+        //digital ocean spaces
+        'do' => [
+            'driver' => 's3',
+            'key' => env('DO_ACCESS_KEY_ID'),
+            'secret' => env('DO_SECRET_ACCESS_KEY'),
+            'region' => env('DO_DEFAULT_REGION'),
+            'bucket' => env('DO_BUCKET'),
+            'endpoint' => env('DO_ENDPOINT'),
+        ],
+
         'cezagora_react' => [
             'driver' => 'local',
             'root' => '/Users/marian_d_dev/dev/CEZIUS/cezagora_react/public',
