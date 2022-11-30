@@ -5,8 +5,6 @@ namespace App\Services;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class MediaService
 {
@@ -24,22 +22,20 @@ class MediaService
     {
         $authOrg = $this->organizationService->getAuthOrganization();
         if ($request->hasFile('list') && $request->file('list')->isValid()) {
-            /** @var Media $media */
-            $media = $authOrg->addMediaFromRequest('list')
-                                  ->toMediaCollection('lists');
+            $authOrg->addMediaFromRequest('list')
+                    ->toMediaCollection('lists');
 
             $authOrg->has_list_uploaded = true;
             $authOrg->save();
 
-            Storage::disk('do')->put(sprintf('lists/%s', $media->file_name), $media->stream());
         } else {
             throw new Exception('Your list was not uploaded.');
         }
 
         return response()->json(
-          [
-              'message' => 'Successfully uploaded.',
-          ]
+            [
+                'message' => 'Successfully uploaded.',
+            ]
         );
     }
 }
