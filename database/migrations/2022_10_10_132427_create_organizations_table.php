@@ -16,11 +16,11 @@ return new class extends Migration
     {
         Schema::create('organizations', function (Blueprint $table) {
             $table->id();
-            $table->enum('type', Organization::TYPES);
+            $table->enum('company_type', Organization::TYPES)->nullable();
             $table->integer('number_of_users')->default(1);
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->string('phone');
+            $table->string('name')->nullable();
+            $table->string('email')->nullable();
+            $table->string('phone')->nullable();
             $table->enum('continent', Organization::CONTINENTS)->nullable();
             $table->string('country')->nullable();
             $table->string('city')->nullable();

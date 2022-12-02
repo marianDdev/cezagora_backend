@@ -30,7 +30,7 @@ class OrganizationFactory extends Factory
             }
         }
         return [
-            'type' => $type,
+            'company_type' => $type,
             'name' => $this->faker->company,
             'email' => $this->faker->companyEmail,
             'phone' => $this->faker->phoneNumber,

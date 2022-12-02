@@ -19,7 +19,7 @@ class OrganizationSeeder extends Seeder
     {
         Organization::create(
             [
-                'type' => 'distributor',
+                'company_type' => 'distributor',
                 'name' => 'Cezius Link',
                 'email' => 'marian@cezius.tech',
                 'phone' => '0737014770',

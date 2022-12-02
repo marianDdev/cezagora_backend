@@ -18,12 +18,9 @@ class UserSeeder extends Seeder
     {
         User::create(
             [
+                'company_name' => 'Cezius Link',
                 'organization_id' => 1,
-                'first_name' => 'Marian',
-                'last_name' => 'Dumitru',
                 'email' => 'marian@cezius.tech',
-                'phone' => '0737014770',
-                'position' => 'CEO',
                 'email_verified_at' => now(),
                 'password' => '$2y$10$vCm4/r2zlSyOl6bkylqhsu.mhxP/.3q/NNXMGbZEg5MrMQk96hae6',
                 'remember_token' => Str::random(10),
