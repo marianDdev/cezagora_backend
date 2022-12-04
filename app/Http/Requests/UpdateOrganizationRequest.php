@@ -19,7 +19,7 @@ class UpdateOrganizationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'company_type' => ['nullable', 'string', Rule::in(Organization::TYPES)],
+            'organization_type'  => ['nullable', 'string', Rule::in(Organization::TYPES)],
             'name' => ['nullable', 'string'],
             'email' => ['nullable', 'email'],
             'phone' => ['nullable', 'string'],

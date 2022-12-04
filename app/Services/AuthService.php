@@ -21,13 +21,11 @@ class AuthService
     {
         $organization = Organization::create(
             [
-                'type'                  => $validated['organization_type'],
                 'number_of_users'       => 1,
-                'name'                => $validated['organization_name'],
-                'email'               => $validated['organization_email'],
-                'phone'               => $validated['organization_phone'],
-                'products_categories' => [],
-                'has_list_uploaded'   => false,
+                'name'                  => $validated['company_name'],
+                'email'                 => $validated['email'],
+                'products_categories'   => [],
+                'has_list_uploaded'     => false,
                 'has_details_completed' => false,
             ]
         );
@@ -35,11 +33,8 @@ class AuthService
         $user = User::create(
             [
                 'organization_id' => $organization->id,
-                'first_name'      => $validated['first_name'],
-                'last_name'       => $validated['last_name'],
-                'email'           => $validated['user_email'],
-                'phone'           => $validated['user_phone'],
-                'position'        => $validated['position'] ?? null,
+                'company_name'    => $organization->name,
+                'email'           => $validated['email'],
                 'password'        => Hash::make($validated['password']),
             ]
         );
@@ -50,8 +45,8 @@ class AuthService
     public function responseData(User $user, Organization $organization, string $token): array
     {
         $authData = [
-            'organization'      => $organization,
-            'user'              => $user,
+            'organization' => $organization,
+            'user'         => $user,
         ];
 
         return [

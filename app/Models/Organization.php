@@ -26,7 +26,6 @@ class Organization extends Model implements HasMedia
     ];
 
     protected $fillable = [
-        'organization_id',
         'name',
         'email',
         'phone',
