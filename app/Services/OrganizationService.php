@@ -21,7 +21,9 @@ class OrganizationService
 
     public function update(Organization $organization, array $validated): void
     {
-        $this->validateRequiredMarketPlace($validated);
+        if (in_array('selling_methods', $validated)) {
+            $this->validateRequiredMarketPlace($validated);
+        }
 
         foreach ($validated as $column => $value) {
             if ($organization->hasAttribute($column)) {
