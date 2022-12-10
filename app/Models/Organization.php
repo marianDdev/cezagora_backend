@@ -12,8 +12,8 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
- * @property string $type
- * @property integer  $id
+ * @property string  $type
+ * @property integer $id
  */
 class Organization extends Model implements HasMedia
 {
@@ -21,7 +21,7 @@ class Organization extends Model implements HasMedia
 
     protected $casts = [
         'products_categories' => AsCollection::class,
-        'selling_methods'     => AsCollection::class,
+        'selling_methods'     => "array",
         'marketplaces'        => AsCollection::class,
     ];
 
@@ -36,6 +36,10 @@ class Organization extends Model implements HasMedia
         'products_categories',
         'selling_methods',
         'marketplaces',
+    ];
+
+    protected $attributes = [
+        'selling_methods' => [],
     ];
 
     const IN_STORE_METHOD       = 'in_store';
@@ -69,15 +73,15 @@ class Organization extends Model implements HasMedia
     ];
 
     const MANUFACTURER_TYPE = 'manufacturer';
-    const DISTRIBUTOR_TYPE = 'distributor';
-    const WHOLESALER_TYPE = 'wholesaler';
-    const RETAILER_TYPE = 'retailer';
+    const DISTRIBUTOR_TYPE  = 'distributor';
+    const WHOLESALER_TYPE   = 'wholesaler';
+    const RETAILER_TYPE     = 'retailer';
 
     const TYPES = [
         self::MANUFACTURER_TYPE,
         self::DISTRIBUTOR_TYPE,
         self::WHOLESALER_TYPE,
-        self::RETAILER_TYPE
+        self::RETAILER_TYPE,
     ];
 
     const CONTINENTS = ['Africa', 'Asia', 'Europe', 'North America', 'Oceania', 'South America'];
