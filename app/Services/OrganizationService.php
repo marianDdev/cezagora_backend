@@ -23,10 +23,17 @@ class OrganizationService
     {
         if (in_array('selling_methods', $validated)) {
             $this->validateRequiredMarketPlace($validated);
+            $validated['selling_methods'] = array_unique($validated['selling_methods']);
         }
 
-        $validated['selling_methods']     = array_unique($validated['selling_methods']);
-        $validated['products_categories'] = array_unique($validated['products_categories']);
+        if (in_array('products_categories', $validated)) {
+            $validated['products_categories'] = array_unique($validated['products_categories']);
+        }
+
+        if (in_array('company_types', $validated)) {
+            $validated['company_types'] = array_unique($validated['company_types']);
+        }
+
         foreach ($validated as $column => $value) {
             if ($organization->hasAttribute($column)) {
                 $organization->$column = $value;
