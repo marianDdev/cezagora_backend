@@ -23,9 +23,9 @@ class SearchController extends Controller
 
     public function searchByType(Request $request, SearchService $searchService): Collection|JsonResponse
     {
-        $companyType = $request->get('company_type');
+        $companyType = $request->get('company_types');
 
-        if (is_null($companyType)) {
+        if (count($companyType) === 0) {
             return response()->json(['Please add a company type.'], 401);
         }
 

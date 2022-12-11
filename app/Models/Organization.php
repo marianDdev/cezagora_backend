@@ -21,7 +21,8 @@ class Organization extends Model implements HasMedia
 
     protected $casts = [
         'products_categories' => AsCollection::class,
-        'selling_methods'     => "array",
+        'selling_methods'     => 'array',
+        'company_types'        => "array",
         'marketplaces'        => AsCollection::class,
     ];
 
@@ -36,10 +37,7 @@ class Organization extends Model implements HasMedia
         'products_categories',
         'selling_methods',
         'marketplaces',
-    ];
-
-    protected $attributes = [
-        'selling_methods' => [],
+        'company_types',
     ];
 
     const IN_STORE_METHOD       = 'in_store';
