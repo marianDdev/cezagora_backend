@@ -5,7 +5,6 @@ namespace App\Services;
 use App\Http\Resources\AuthResponseResource;
 use App\Models\Organization;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
 
 class AuthService
@@ -24,9 +23,10 @@ class AuthService
                 'number_of_users'       => 1,
                 'name'                  => $validated['company_name'],
                 'email'                 => $validated['email'],
-                'products_categories'   => [],
                 'has_list_uploaded'     => false,
                 'has_details_completed' => false,
+                'company_types' => [],
+                'selling_methods' => []
             ]
         );
 

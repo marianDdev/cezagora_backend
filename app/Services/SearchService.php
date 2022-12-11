@@ -28,8 +28,8 @@ class SearchService
                 ->where('name', 'LIKE', "%{$filters['keyword']}%")
                 ->orWhereJsonContains('products_categories', $filters['keyword']);
         })
-                                  ->when(!empty($filters['company_type']), function ($query) use ($filters) {
-                                      return $query->where('type', $filters['company_type']);
+                                  ->when(!empty($filters['company_types']), function ($query) use ($filters) {
+                                      return $query->whereJsonContains('company_types', $filters['type']);
                                   })
                                   ->when(!empty($filters['continent']), function ($query) use ($filters) {
                                       return $query->where('continent', $filters['continent']);

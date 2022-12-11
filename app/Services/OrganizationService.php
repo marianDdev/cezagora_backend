@@ -25,7 +25,7 @@ class OrganizationService
             $this->validateRequiredMarketPlace($validated);
         }
 
-        $validated['selling_methods'] = array_unique($validated['selling_methods']);
+        $validated['selling_methods']     = array_unique($validated['selling_methods']);
         $validated['products_categories'] = array_unique($validated['products_categories']);
         foreach ($validated as $column => $value) {
             if ($organization->hasAttribute($column)) {
@@ -50,7 +50,17 @@ class OrganizationService
 
     private function updateHasDetailsCompleted(Organization $organization): void
     {
-        $organization->has_details_completed = true;
-        $organization->save();
+        $hasDetailsCompleted = count($organization->company_types) > 0
+                               && !is_null($organization->phone)
+                               && !is_null($organization->continent)
+                               && !is_null($organization->country)
+                               && !is_null($organization->city)
+                               && !is_null($organization->address)
+                               && count($organization->products_categories) > 0
+                               && count($organization->selling_methods) > 0;
+        if ($hasDetailsCompleted) {
+            $organization->has_details_completed = true;
+            $organization->save();
+        }
     }
 }

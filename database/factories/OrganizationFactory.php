@@ -30,7 +30,7 @@ class OrganizationFactory extends Factory
             }
         }
         return [
-            'company_type' => $type,
+            'company_types' => [],
             'name' => $this->faker->company,
             'email' => $this->faker->companyEmail,
             'phone' => $this->faker->phoneNumber,
@@ -39,7 +39,7 @@ class OrganizationFactory extends Factory
             'city' => $this->faker->city,
             'address' => $this->faker->streetAddress,
             'products_categories' => ProductsCategory::inRandomOrder()->take(rand(1,10))->get()->pluck('name'),
-            'selling_methods' => $sellingMethods,
+            'selling_methods' => [],
             'marketplaces' => $marketplaces
         ];
     }

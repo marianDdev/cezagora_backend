@@ -19,7 +19,7 @@ class OrganizationSeeder extends Seeder
     {
         Organization::create(
             [
-                'company_type' => 'distributor',
+                'company_types' => [],
                 'name' => 'Cezius Link',
                 'email' => 'marian@cezius.tech',
                 'phone' => '0737014770',
@@ -28,8 +28,8 @@ class OrganizationSeeder extends Seeder
                 'city' => 'Bucharest',
                 'address' => 'Str Patriotilor nr 9',
                 'products_categories' => ProductsCategory::inRandomOrder()->take(rand(1,10))->get()->pluck('name'),
-                'selling_methods' => null,
-                'marketplaces' => null
+                'selling_methods' => [],
+                'marketplaces' => null,
             ]
         );
 
