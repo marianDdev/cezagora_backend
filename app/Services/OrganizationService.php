@@ -25,6 +25,8 @@ class OrganizationService
             $this->validateRequiredMarketPlace($validated);
         }
 
+        $validated['selling_methods'] = array_unique($validated['selling_methods']);
+        $validated['products_categories'] = array_unique($validated['products_categories']);
         foreach ($validated as $column => $value) {
             if ($organization->hasAttribute($column)) {
                 $organization->$column = $value;
