@@ -6,6 +6,7 @@ use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
 use App\Http\Resources\PostResource;
 use App\Http\Resources\PostResourceCollection;
+use App\Models\Organization;
 use App\Models\Post;
 use App\Services\OrganizationService;
 use Illuminate\Http\JsonResponse;
@@ -33,6 +34,13 @@ class PostController extends Controller
         $authorg = $organizationService->getAuthOrganization();
 
         return new PostResourceCollection($authorg->posts);
+    }
+
+    public function postsByOrgId(int $orgId): PostResourceCollection
+    {
+        $org = Organization::find($orgId);
+
+        return new PostResourceCollection($org->posts);
     }
 
     public function create(StorePostRequest $postRequest, OrganizationService $organizationService): PostResource
