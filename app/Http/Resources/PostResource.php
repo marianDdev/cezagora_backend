@@ -18,6 +18,7 @@ class PostResource extends JsonResource
         return [
             'id' => $this->id,
             'author' => $this['author']->name,
+            'avatar' => $this['author']->getFirstMediaUrl('profile_picture'),
             'title' => $this['title'],
             'text' => $this['text'],
             'media' => $this->getMedia('post_media') ?? null,
