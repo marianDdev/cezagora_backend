@@ -42,6 +42,11 @@ class MediaService
         );
     }
 
+    /**
+     * @throws FileDoesNotExist
+     * @throws FileIsTooBig
+     * @throws Exception
+     */
     public function uploadProfilePicture(Request $request): JsonResponse
     {
         $authOrg = $this->organizationService->getAuthOrganization();
