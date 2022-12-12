@@ -42,6 +42,20 @@ class OrganizationController extends Controller
         ];
     }
 
+    public function getProfilePictureUrl(OrganizationService $service): string
+    {
+        $authorg = $service->getAuthOrganization();
+
+        return $authorg->getFirstMediaUrl('profile_picture');
+    }
+
+    public function getBackgroundPictureUrl(OrganizationService $service): string
+    {
+        $authorg = $service->getAuthOrganization();
+
+        return $authorg->getFirstMediaUrl('background_picture');
+    }
+
     /**
      * @throws Exception
      */
