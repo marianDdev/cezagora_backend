@@ -39,6 +39,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
         function () {
             Route::get('/organization_type/{organizationId}', [OrganizationController::class, 'getDataByOrganizationId'])->name('get.other_organization_data');
             Route::patch('/details', [OrganizationController::class, 'update'])->name('organization.update_details');
+            Route::post('/avatar/upload', [OrganizationController::class, 'uploadProfilePicture'])->name('organization.upload_avatar');
+            Route::post('/background/upload', [OrganizationController::class, 'uploadBackgroundPicture'])->name('organization.upload_background');
 
             Route::group(
                 ['prefix' => '/lists'],

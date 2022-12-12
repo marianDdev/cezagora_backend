@@ -6,9 +6,12 @@ use App\Http\Requests\UpdateOrganizationRequest;
 use App\Http\Requests\UploadListRequest;
 use App\Http\Resources\OrganizationResource;
 use App\Models\Organization;
+use App\Services\MediaService;
 use App\Services\NetworkingService;
 use App\Services\OrganizationService;
 use Exception;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class OrganizationController extends Controller
 {
@@ -37,5 +40,33 @@ class OrganizationController extends Controller
             'networking_status' => $networkingStatus,
             'lists'             => $lists,
         ];
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function uploadProfilePicture(Request $request, MediaService $mediaService): JsonResponse
+    {
+        $mediaService->uploadProfilePicture($request);
+
+        return response()->json(
+            [
+                'message' => 'Successfully uploaded.',
+            ]
+        );
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function uploadBackgroundPicture(Request $request, MediaService $mediaService): JsonResponse
+    {
+        $mediaService->uploadBackgroundPicture($request);
+
+        return response()->json(
+            [
+                'message' => 'Successfully uploaded.',
+            ]
+        );
     }
 }
