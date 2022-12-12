@@ -34,11 +34,16 @@ class OrganizationController extends Controller
         $organization     = Organization::find($organizationId);
         $networkingStatus = $networkingService->getNetworkingStatusByOrganizationId($organization->id);
         $lists            = $organization->getMedia('lists');
+        $profilePictures = [
+            "avatar" => $organization->getFirstMediaUrl('profile_picture') ?? "",
+            "background" => $organization->getFirstMediaUrl('background_picture') ?? "",
+        ];
 
         return [
             'organization'      => $organization,
             'networking_status' => $networkingStatus,
             'lists'             => $lists,
+            'profile_pictures' => $profilePictures
         ];
     }
 
