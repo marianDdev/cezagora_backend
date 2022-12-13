@@ -94,6 +94,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
             Route::get('/{id}', [PostController::class, 'getOne'])->name('posts.get_one');
             Route::get('/', [PostController::class, 'list'])->name('posts.list');
             Route::get('/my/posts', [PostController::class, 'myPosts'])->name('posts.my_posts_list');
+            Route::get('/otherCompany/{organizationId}', [PostController::class, 'postsByOrgId'])->name('posts.other_company');
             Route::post('/', [PostController::class, 'create'])->name('post.create');
             Route::patch('/{id}', [PostController::class, 'update'])->name('post.update');
             Route::delete('/{id}', [PostController::class, 'delete'])->name('post.delete');
