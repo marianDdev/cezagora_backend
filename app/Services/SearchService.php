@@ -53,6 +53,8 @@ class SearchService
             foreach ($collection as $item) {
                 $item->networking_status = $this->networkingService->getNetworkingStatusByOrganizationId($item->id);
                 $item->lists             = $item->getMedia('lists');
+                $item->avatar = $item->getFirstMediaUrl('profile_picture');
+                $item->background = $item->getFirstMediaUrl('background_picture');
             }
         }
 

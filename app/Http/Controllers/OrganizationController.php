@@ -34,31 +34,42 @@ class OrganizationController extends Controller
         $organization     = Organization::find($organizationId);
         $networkingStatus = $networkingService->getNetworkingStatusByOrganizationId($organization->id);
         $lists            = $organization->getMedia('lists');
-        $profilePictures = [
-            "avatar" => $organization->getFirstMediaUrl('profile_picture') ?? "",
-            "background" => $organization->getFirstMediaUrl('background_picture') ?? "",
-        ];
 
         return [
             'organization'      => $organization,
             'networking_status' => $networkingStatus,
             'lists'             => $lists,
-            'profile_pictures' => $profilePictures
+            "avatar" => $organization->getFirstMediaUrl('profile_picture') ?? null,
+            "background" => $organization->getFirstMediaUrl('background_picture') ?? null,
         ];
     }
 
-    public function getProfilePictureUrl(OrganizationService $service): string
+    public function getProfilePictureUrl(OrganizationService $service):? string
     {
         $authorg = $service->getAuthOrganization();
 
         return $authorg->getFirstMediaUrl('profile_picture');
     }
 
-    public function getBackgroundPictureUrl(OrganizationService $service): string
+    public function getOtherProfilePictureUrl(int $organizationId): string
+    {
+        $org = Organization::find($organizationId);
+
+        return $org->getFirstMediaUrl('profile_picture');
+    }
+
+    public function getBackgroundPictureUrl(OrganizationService $service): ?string
     {
         $authorg = $service->getAuthOrganization();
 
         return $authorg->getFirstMediaUrl('background_picture');
+    }
+
+    public function getOtherBackgroundPictureUrl(int $organizationId): ?string
+    {
+        $org = Organization::find($organizationId);
+
+        return $org->getFirstMediaUrl('background_picture');
     }
 
     /**

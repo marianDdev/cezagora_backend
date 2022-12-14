@@ -41,8 +41,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
             Route::patch('/details', [OrganizationController::class, 'update'])->name('organization.update_details');
             Route::post('/avatar/upload', [OrganizationController::class, 'uploadProfilePicture'])->name('organization.upload_avatar');
             Route::get('/avatar', [OrganizationController::class, 'getProfilePictureUrl'])->name('organization.get_avatar');
+            Route::get('/avatar/{organizationId}', [OrganizationController::class, 'getOtherProfilePictureUrl'])->name('organization.get_avatar');
             Route::post('/background/upload', [OrganizationController::class, 'uploadBackgroundPicture'])->name('organization.upload_background');
             Route::get('/background', [OrganizationController::class, 'getBackgroundPictureUrl'])->name('organization.get_background');
+            Route::get('/background/{organizationId}', [OrganizationController::class, 'getOtherBackgroundPictureUrl'])->name('organization.get_other_background');
 
             Route::group(
                 ['prefix' => '/lists'],
