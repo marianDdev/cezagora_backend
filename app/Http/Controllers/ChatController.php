@@ -31,15 +31,17 @@ class ChatController extends Controller
 
     public function sendMessage(Request $request, ChatService $chatService): JsonResponse
     {
+        event(new MessageEvent($request->user, $request->message));
+
         $message = $request->input('message');
-        $otherOrganizationId = $request->input('otherOrganizationId');
-        $authOrganizationId = $this->authOrganization()->id;
-
-        event(new MessageEvent($message, $otherOrganizationId));
-
-        $thread = $chatService->createThread($authOrganizationId, $otherOrganizationId);
-
-        $message = $chatService->createMessage($authOrganizationId, $thread, $message);
+//        $otherOrganizationId = $request->input('otherOrganizationId');
+//        $authOrganizationId = $this->authOrganization()->id;
+//
+//        event(new MessageEvent($message, $otherOrganizationId));
+//
+//        $thread = $chatService->createThread($authOrganizationId, $otherOrganizationId);
+//
+//        $message = $chatService->createMessage($authOrganizationId, $thread, $message);
 
         return response()->json(
             [
