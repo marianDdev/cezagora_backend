@@ -1,5 +1,6 @@
 <?php
 
+use App\Events\MessageEvent;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
 use App\Http\Controllers\Auth\LoginController;
@@ -19,6 +20,7 @@ use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProductsCategoryController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\UserController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -88,6 +90,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     //chat
     Route::get('/threads', [ChatController::class, 'getMyThreads'])->name('chat.list_messages');
     Route::post('/messages', [ChatController::class, 'sendMessage'])->name('chat.post_message');
+    Route::get('/thread_messages/{otherOrganizationId}', [ChatController::class, 'getMessagesByOtherOrganizationId'])->name('chat.thread_messages');
 
     //posts
     Route::group(
@@ -144,11 +147,3 @@ Route::post('/email/verification-notification', [EmailVerificationNotificationCo
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
      ->middleware('auth')
      ->name('logout');
-
-Route::get('/raspuns', function () {
-    return 'uite si raspunsul';
-});
-
-Route::post('/ceva', function () {
-    return 'ceva asa si asa';
-});

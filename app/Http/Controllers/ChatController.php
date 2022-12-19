@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Events\MessageEvent;
+use App\Http\Requests\StoreMessageRequest;
+use App\Models\Message;
 use App\Models\Organization;
 use App\Models\Thread;
 use App\Models\User;
@@ -23,19 +25,29 @@ class ChatController extends Controller
                      ->get();
     }
 
-    public function getMessagesByOtherOrganizationId(int $otherOrganizationId, ChatService $chatService): void
+    public function getMessagesByOtherOrganizationId(int $otherOrganizationId, ChatService $chatService): array
     {
         $authOrganizationId = $this->authOrganization()->id;
-        $thread = $chatService->createThread($authOrganizationId, $otherOrganizationId);
+        $thread             = $chatService->getThreadByOtherOrganizationId($authOrganizationId, $otherOrganizationId);
+        $messages           = [];
+
+        if (!is_null($thread)) {
+            $messages = Message::where('thread_id', $thread->id)->get()->toArray();
+        }
+
+        return $messages;
     }
 
-    public function sendMessage(Request $request, ChatService $chatService): JsonResponse
-    {
-        $message = $request->input('message');
-        $otherOrganizationId = $request->input('otherOrganizationId');
-        $authOrganizationId = $this->authOrganization()->id;
 
-        event(new MessageEvent($message, $otherOrganizationId));
+    public function sendMessage(StoreMessageRequest $request, ChatService $chatService): JsonResponse
+    {
+        $validated = $request->validated();
+
+        $message             = $validated['message'];
+        $otherOrganizationId = $validated['interlocutor_id'];
+        $authOrganizationId  = $this->authOrganization()->id;
+
+        event(new MessageEvent($otherOrganizationId, $message));
 
         $thread = $chatService->createThread($authOrganizationId, $otherOrganizationId);
 
@@ -43,8 +55,8 @@ class ChatController extends Controller
 
         return response()->json(
             [
-                'status' => 'Message Sent.',
-                'message' => $message
+                'status'  => 'Message Sent.',
+                'message' => $message,
             ]
         );
     }

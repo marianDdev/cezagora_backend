@@ -2,35 +2,45 @@
 
 namespace App\Events;
 
+use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class MessageEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    private string $message;
-    private string $otherOrganizationId;
 
-    public function __construct(
-        string $message,
-        int $otherOrganizationId
-    )
+    private $interlocutor_id;
+    private $message;
+
+    public function __construct($interlocutor_id, $message)
     {
-        $this->message = $message;
-        $this->otherOrganizationId = $otherOrganizationId;
+        $this->message         = $message;
+        $this->interlocutor_id = $interlocutor_id;
     }
 
-    public function broadcastOn(): PrivateChannel
+    public function broadcastWith()
     {
-        return new PrivateChannel('chat');
+        return [
+            'id'         => Str::orderedUuid(),
+            'author_id'  => Auth::user()->id,
+            'message'    => $this->message,
+            'created_at' => now()->toDateTimeString(),
+        ];
     }
 
-    public function broadcastAs()
+    public function broadcastAs(): string
     {
         return 'message.new';
+    }
+
+    public function broadcastOn(): Channel
+    {
+        return new Channel('public.room');
     }
 }
