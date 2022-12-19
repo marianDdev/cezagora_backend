@@ -90,6 +90,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     //chat
     Route::get('/threads', [ChatController::class, 'getMyThreads'])->name('chat.list_messages');
     Route::post('/messages', [ChatController::class, 'sendMessage'])->name('chat.post_message');
+    Route::get('/thread_messages/{otherOrganizationId}', [ChatController::class, 'getMessagesByOtherOrganizationId'])->name('chat.thread_messages');
 
     //posts
     Route::group(
