@@ -4,40 +4,43 @@ namespace App\Http\Controllers;
 
 use App\Events\MessageEvent;
 use App\Http\Requests\StoreMessageRequest;
+use App\Http\Resources\ThreadResourceCollection;
 use App\Models\Message;
 use App\Models\Organization;
-use App\Models\Thread;
 use App\Models\User;
 use App\Services\ChatService;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class ChatController extends Controller
 {
-    public function getMyThreads(): Collection
+    public function getMyThreads(ChatService $service): ThreadResourceCollection
     {
         $authOrg = $this->authOrganization();
+        $myThreads = $service->getMyThreads($authOrg);
 
-        return Thread::where('first_organization_id', $authOrg->id)
-                     ->orWhere('second_organization_id', $authOrg->id)
-                     ->get();
+        return new ThreadResourceCollection($myThreads);
     }
 
     public function getMessagesByOtherOrganizationId(int $otherOrganizationId, ChatService $chatService): array
     {
+        $interlocutor = Organization::find($otherOrganizationId);
+        $interlocutorAvatar = $interlocutor->getFirstMediaUrl('profile_picture');
         $authOrganizationId = $this->authOrganization()->id;
         $thread             = $chatService->getThreadByOtherOrganizationId($authOrganizationId, $otherOrganizationId);
-        $messages           = [];
+
+        $messagesArray           = [];
 
         if (!is_null($thread)) {
-            $messages = Message::where('thread_id', $thread->id)->get()->toArray();
+            $messages = Message::where('thread_id', $thread->id)->get();
+            $messages->map(function ($message) use ($interlocutorAvatar) {
+                $message->interlocutor_avatar = $interlocutorAvatar;
+            });
+            $messagesArray = $messages->toArray();
         }
 
-        return $messages;
+        return $messagesArray;
     }
-
 
     public function sendMessage(StoreMessageRequest $request, ChatService $chatService): JsonResponse
     {
