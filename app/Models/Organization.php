@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Casts\AsCollection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -117,6 +118,21 @@ class Organization extends Model implements HasMedia
     public function connectionRequestsReceived(): HasMany
     {
         return $this->hasMany(ConnectionRequest::class, 'receiver_id', 'id');
+    }
+
+    public function connections(): HasMany
+    {
+        return $this->hasMany(Connection::class);
+    }
+
+    public function followers(): HasMany
+    {
+        return $this->hasMany(Follower::class, 'followed_organization_id', 'id');
+    }
+
+    public function followings(): HasMany
+    {
+        return $this->hasMany(Follower::class, 'follower_organization_id', 'id');
     }
 
     public function hasAttribute(string $key): bool

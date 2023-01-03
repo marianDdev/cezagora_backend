@@ -18,7 +18,11 @@ class AuthResponseResource extends JsonResource
         return [
             'organization'      => new OrganizationResource($this['organization']),
             'user'              => new UserResource($this['user']),
-            'profile_picture' => $this['organization']->getFirstMediaUrl('profile_picture')
+            'profile_picture'   => $this['profile_picture'],
+            'background_picture'   => $this['background_picture'],
+            'connections_count' => $this['connections_count'],
+            'followers_count'   => $this['followers_count'],
+            'followings_count'  => $this['followings_count'],
         ];
     }
 }

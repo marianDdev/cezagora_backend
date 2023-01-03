@@ -10,7 +10,6 @@ use App\Models\Follower;
 use App\Models\Organization;
 use App\Models\User;
 use App\Notifications\ConnectionRequestAccepted;
-use App\Notifications\ConnectionRequestReceived;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
@@ -122,6 +121,16 @@ class NetworkingService
             'followed'             => $this->isFollowed($authOrganizationId, $organizationId),
         ];
 
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function getNetworkingStatsByOrganizationId(int $organizationId)
+    {
+        if (Organization::find($organizationId) === null) {
+            throw new Exception('This is not a valid organization.');
+        }
     }
 
     private function isConnectionRequested(int $requesterOrganizationId, int $receiverOrganizationId): bool

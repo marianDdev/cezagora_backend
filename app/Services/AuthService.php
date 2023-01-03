@@ -47,6 +47,11 @@ class AuthService
         $authData = [
             'organization' => $organization,
             'user'         => $user,
+            'profile_picture' => $organization->getFirstMediaUrl('profile_picture'),
+            'background_picture' => $organization->getFirstMediaUrl('background_picture'),
+            'connections_count' => $organization->connections->count(),
+            'followers_count' => $organization->followers->count(),
+            'followings_count' => $organization->followings->count(),
         ];
 
         return [
