@@ -145,6 +145,10 @@ Route::post('/login', [AuthenticationController::class, 'login'])
      ->middleware('guest')
      ->name('login');
 
+Route::post('/admin_login', [AuthenticationController::class, 'adminLogin'])
+     ->middleware('guest')
+     ->name('admin_login');
+
 Route::post('/forgot-password', [PasswordResetLinkController::class, 'store'])
      ->middleware('guest')
      ->name('password.email');

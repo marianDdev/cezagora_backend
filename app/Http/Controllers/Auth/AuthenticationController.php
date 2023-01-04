@@ -47,4 +47,22 @@ class AuthenticationController extends Controller
 
         return $authService->responseData($user, $userOrganization, $token);
     }
+
+    public function adminLogin(Request $request): JsonResponse {
+        if (!Auth::attempt($request->only('email', 'password'))) {
+            return response()->json([
+                                        'message' => 'Invalid login details',
+                                    ], 401);
+        }
+
+        $user = User::where('email', $request['email'])->firstOrFail();
+
+        if (!$user->isAdmin()) {
+            return response()->json('Only admin users are allowed', 401);
+        }
+
+        $token = $user->createToken('auth_token')->plainTextToken;
+
+        return response()->json(['user' => $user, 'token' => $token]);
+    }
 }
