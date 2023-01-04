@@ -22,6 +22,7 @@ class User extends Authenticatable
         'company_name',
         'email',
         'password',
+        'is_admin',
     ];
 
     protected $hidden = [
@@ -96,5 +97,10 @@ class User extends Authenticatable
     public function hasFollowers(): bool
     {
         return !is_null($this->followers);
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->is_admin == true;
     }
 }

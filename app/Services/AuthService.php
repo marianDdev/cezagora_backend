@@ -32,6 +32,7 @@ class AuthService
 
         $user = User::create(
             [
+                'is_admin' => false,
                 'organization_id' => $organization->id,
                 'company_name'    => $organization->name,
                 'email'           => $validated['email'],

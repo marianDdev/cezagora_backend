@@ -11,6 +11,7 @@ use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ConnectionRequestController;
+use App\Http\Controllers\CosmeticsEventController;
 use App\Http\Controllers\FollowerController;
 use App\Http\Controllers\FollowingController;
 use App\Http\Controllers\ListsController;
@@ -20,6 +21,7 @@ use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProductsCategoryController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\UserController;
+use App\Http\Middleware\Admin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -114,6 +116,21 @@ Route::middleware(['auth:sanctum'])->group(function () {
             Route::post('/', [CommentController::class, 'create'])->name('comments.create');
             Route::patch('/{id}', [CommentController::class, 'update'])->name('comments.update');
             Route::delete('/{id}', [CommentController::class, 'delete'])->name('comments.delete');
+        }
+    );
+
+    //events
+    Route::group(
+        [
+            'prefix' => '/events',
+            'middleware' => Admin::class
+        ],
+        function () {
+            Route::get('/{id}', [CosmeticsEventController::class, 'getOne'])->name('events.get_one');
+            Route::get('/', [CosmeticsEventController::class, 'list'])->name('events.list');
+            Route::post('/', [CosmeticsEventController::class, 'create'])->name('events.create');
+            Route::patch('/{id}', [CosmeticsEventController::class, 'update'])->name('events.update');
+            Route::delete('/{id}', [CosmeticsEventController::class, 'delete'])->name('events.delete');
         }
     );
 });
