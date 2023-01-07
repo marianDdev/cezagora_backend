@@ -30,8 +30,8 @@ class NetworkingService
      */
     public function createConnectionRequest(int $receiverOrganizationId): ConnectionRequestResource
     {
-        $authOrg = $this->organizationService->getAuthOrganization();
-        $hasLists              = $authOrg->getMedia('lists') !== null;
+        $authOrg  = $this->organizationService->getAuthOrganization();
+        $hasLists = $authOrg->getMedia('lists') !== null;
 
         if (!$authOrg->has_details_completed || !$hasLists) {
             throw new Exception("you can't make connection request if you didn't add your company details or didn't upload stock lists.");
@@ -62,8 +62,8 @@ class NetworkingService
     public function acceptConnectionRequest(int $connectionRequestid): ConnectionResource|JsonResponse
     {
         /** @var User $authUser */
-        $authUser = Auth::user();
-        $authOrg = $this->organizationService->getAuthOrganization();
+        $authUser              = Auth::user();
+        $authOrg               = $this->organizationService->getAuthOrganization();
         $connectionRequest     = ConnectionRequest::find($connectionRequestid);
         $requesterOrganization = Organization::find($connectionRequest->requester_organization_id);
 
@@ -95,6 +95,15 @@ class NetworkingService
     public function follow(int $followedOrganizationId): void
     {
         $followerOrganizationid = $this->organizationService->getAuthOrganization()->id;
+
+        $existingFollow = Follower::where('follower_organization_id', $followerOrganizationid)
+                                  ->where('followed_organization_id', $followedOrganizationId)
+                                  ->first();
+
+        if (!is_null($existingFollow)) {
+            return;
+        }
+
 
         Follower::create(
             [

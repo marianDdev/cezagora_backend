@@ -120,17 +120,17 @@ Route::middleware(['auth:sanctum'])->group(function () {
     );
 
     //events
-    Route::group(
-        [
-            'prefix' => '/events',
-            'middleware' => Admin::class
-        ],
+    Route::group(['prefix' => '/events'],
         function () {
+            Route::group(['middleware' => Admin::class],
+                function () {
+                    Route::post('/', [CosmeticsEventController::class, 'create'])->name('events.create');
+                    Route::patch('/{id}', [CosmeticsEventController::class, 'update'])->name('events.update');
+                    Route::delete('/{id}', [CosmeticsEventController::class, 'delete'])->name('events.delete');
+                }
+            );
             Route::get('/{id}', [CosmeticsEventController::class, 'getOne'])->name('events.get_one');
             Route::get('/', [CosmeticsEventController::class, 'list'])->name('events.list');
-            Route::post('/', [CosmeticsEventController::class, 'create'])->name('events.create');
-            Route::patch('/{id}', [CosmeticsEventController::class, 'update'])->name('events.update');
-            Route::delete('/{id}', [CosmeticsEventController::class, 'delete'])->name('events.delete');
         }
     );
 });
