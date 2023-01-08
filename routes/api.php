@@ -13,7 +13,6 @@ use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ConnectionRequestController;
 use App\Http\Controllers\CosmeticsEventController;
 use App\Http\Controllers\FollowerController;
-use App\Http\Controllers\FollowingController;
 use App\Http\Controllers\ListsController;
 use App\Http\Controllers\NetworkingController;
 use App\Http\Controllers\OrganizationController;
@@ -84,6 +83,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         }
     );
     Route::post('/{organizationId}/follow', [FollowerController::class, 'follow'])->name('follow.create');
+    Route::delete('/{organizationId}/unfollow', [FollowerController::class, 'unFollow'])->name('follow.delete');
     Route::get('/networking/status/{organizationId}', [NetworkingController::class, 'getStatusByOrganizationId'])->name('networking_status.by_organization_id');
 
     //auth user data

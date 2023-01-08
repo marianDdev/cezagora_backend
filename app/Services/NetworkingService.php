@@ -92,22 +92,20 @@ class NetworkingService
         return $connection;
     }
 
-    public function follow(int $followedOrganizationId): void
+    public function getFollowing(int $followedOrganizationId)
     {
         $followerOrganizationid = $this->organizationService->getAuthOrganization()->id;
 
-        $existingFollow = Follower::where('follower_organization_id', $followerOrganizationid)
-                                  ->where('followed_organization_id', $followedOrganizationId)
-                                  ->first();
+        return Follower::where('follower_organization_id', $followerOrganizationid)
+                       ->where('followed_organization_id', $followedOrganizationId)
+                       ->first();
+    }
 
-        if (!is_null($existingFollow)) {
-            return;
-        }
-
-
+    public function follow(int $authOrganizationid, int $followedOrganizationId): void
+    {
         Follower::create(
             [
-                'follower_organization_id' => $followerOrganizationid,
+                'follower_organization_id' => $authOrganizationid,
                 'followed_organization_id' => $followedOrganizationId,
             ]
         );
