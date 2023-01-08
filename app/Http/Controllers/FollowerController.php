@@ -18,11 +18,11 @@ class FollowerController extends Controller
         $existingFollow = $networkingService->getFollowing($followedOrganizationId);
 
         if ($followedOrganizationId === $authOrganizationid) {
-            return response()->json('You are trying to follow your own company.');
+            return response()->json('You are trying to follow your own company.', 401);
         }
 
         if (!is_null($existingFollow)) {
-            return response()->json('You are already following this company.');
+            return response()->json('You are already following this company.', 401);
         }
 
 

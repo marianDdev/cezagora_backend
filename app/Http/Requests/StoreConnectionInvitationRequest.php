@@ -18,9 +18,7 @@ class StoreConnectionInvitationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'organization_id' => ['required', 'integer', Rule::exists(Organization::class, 'id'), Rule::notIn(ConnectionRequest::all()->pluck('organization_id')->toArray())],
-            'organization_type' => ['required', 'string', Rule::in(Organization::TYPES)],
-            'name' => ['required', 'string'],
+            'receiver_id' => ['required', 'integer', Rule::exists(Organization::class, 'id')],
         ];
     }
 

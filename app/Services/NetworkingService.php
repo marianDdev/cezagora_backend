@@ -28,9 +28,8 @@ class NetworkingService
     /**
      * @throws Exception
      */
-    public function createConnectionRequest(int $receiverOrganizationId): ConnectionRequestResource
+    public function createConnectionRequest(Organization $authOrg, Organization $receiver): ConnectionRequest
     {
-        $authOrg  = $this->organizationService->getAuthOrganization();
         $hasLists = $authOrg->getMedia('lists') !== null;
 
         if (!$authOrg->has_details_completed || !$hasLists) {
@@ -38,17 +37,17 @@ class NetworkingService
         }
 
         $data = [
-            'receiver_organization_id'  => $receiverOrganizationId,
+            'receiver_organization_id'  => $receiver->id,
             'requester_organization_id' => $authOrg->id,
         ];
 
         $newConnectionRequest = ConnectionRequest::create($data);
 
-        $this->follow($receiverOrganizationId);
+        $this->follow($authOrg->id, $receiver->id);
 
-        $this->notificationService->notifyAboutConnectionRequestReceived($receiverOrganizationId);
+        $this->notificationService->notifyAboutConnectionRequestReceived($receiver);
 
-        return new ConnectionRequestResource($newConnectionRequest);
+        return $newConnectionRequest;
     }
 
     /**
