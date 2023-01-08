@@ -15,17 +15,16 @@ class NotificationService
         $this->organizationService = $organizationService;
     }
 
-    public function notifyAboutConnectionRequestReceived(int $receiverOrganizationId): void
+    public function notifyAboutConnectionRequestReceived(Organization $receiver): void
     {
-        $receiverOrganization      = Organization::find($receiverOrganizationId);
         $authOrganization = $this->organizationService->getAuthOrganization();
 
         $email = [
-            'receiver'           => $receiverOrganization->name,
-            'requester_org_type' => $authOrganization->type,
+            'receiver'           => $receiver->name,
+            'requester_org_type' => $authOrganization->type ?? '',
             'requester_org_name' => $authOrganization->name,
         ];
 
-        $receiverOrganization->user->notify(new ConnectionRequestReceived($email));
+        $receiver->user->notify(new ConnectionRequestReceived($email));
     }
 }
