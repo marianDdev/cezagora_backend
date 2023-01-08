@@ -51,7 +51,18 @@ class SearchService
 
         if (!$collection->isEmpty()) {
             foreach ($collection as $item) {
-                $item->networking_status = $this->networkingService->getNetworkingStatusByOrganizationId($item->id);
+                $networkingStats = $this->networkingService->getNetworkingStatusByOrganizationId($item->id);
+                $item->following = $networkingStats['followed'] ? 'following' : 'follow';
+                $item->connected = 'connect';
+
+                if ($networkingStats['connected']) {
+                    $item->connected = 'connected';
+                }
+
+                if ($networkingStats['connection_requested']) {
+                    $item->connected = 'connection requested';
+                }
+
                 $item->lists             = $item->getMedia('lists');
                 $item->avatar = $item->getFirstMediaUrl('profile_picture');
                 $item->background = $item->getFirstMediaUrl('background_picture');
