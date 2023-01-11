@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Organization;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ConnectionRequestResource extends JsonResource
@@ -14,6 +15,13 @@ class ConnectionRequestResource extends JsonResource
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        $organization = Organization::find($this->requester_organization_id);
+        $avatarUrl = $organization->getFirstMediaUrl('profile_picture') ?? null;
+        $name = $organization->name;
+
+        return [
+            'name' => $name,
+            'avatar' => $avatarUrl
+        ];
     }
 }

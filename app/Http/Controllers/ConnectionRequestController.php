@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreConnectionInvitationRequest;
 use App\Http\Resources\ConnectionRequestResource;
+use App\Http\Resources\ConnectionRequestResourceCollection;
 use App\Http\Resources\ConnectionResource;
 use App\Models\ConnectionRequest;
 use App\Models\Organization;
@@ -14,6 +15,13 @@ use Illuminate\Http\JsonResponse;
 
 class ConnectionRequestController extends Controller
 {
+    public function list(): ConnectionRequestResourceCollection
+    {
+        $requests = ConnectionRequest::all()->sortByDesc('created_at');
+
+        return new ConnectionRequestResourceCollection(ConnectionRequest::all());
+    }
+
     public function create(
         StoreConnectionInvitationRequest $request,
         NetworkingService                $service,
