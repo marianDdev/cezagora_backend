@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Organization;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -26,7 +27,5 @@ class UserSeeder extends Seeder
                 'remember_token' => Str::random(10),
             ]
         );
-
-        User::factory(50)->create();
     }
 }
