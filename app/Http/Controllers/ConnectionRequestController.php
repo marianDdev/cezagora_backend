@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AcceptConnectionRequest;
 use App\Http\Requests\StoreConnectionInvitationRequest;
 use App\Http\Resources\ConnectionRequestResource;
 use App\Http\Resources\ConnectionRequestResourceCollection;
@@ -15,11 +16,12 @@ use Illuminate\Http\JsonResponse;
 
 class ConnectionRequestController extends Controller
 {
-    public function list(): ConnectionRequestResourceCollection
+    public function list(OrganizationService $organizationService): ConnectionRequestResourceCollection
     {
-        $requests = ConnectionRequest::all()->sortByDesc('created_at');
+        $authOrg = $organizationService->getAuthOrganization();
+        $requests = $authOrg->connectionRequestsReceived->sortByDesc('created_at');
 
-        return new ConnectionRequestResourceCollection(ConnectionRequest::all());
+        return new ConnectionRequestResourceCollection($requests);
     }
 
     public function create(
@@ -50,8 +52,38 @@ class ConnectionRequestController extends Controller
         }
     }
 
-    public function acceptRequest(NetworkingService $service, int $connectionRequestid): ConnectionResource|JsonResponse
+    public function acceptRequest(
+        AcceptConnectionRequest $request,
+        NetworkingService $service,
+        OrganizationService $organizationService
+    ): JsonResponse
     {
-        return $service->acceptConnectionRequest($connectionRequestid);
+        $validated = $request->validated();
+        $authOrg = $organizationService->getAuthOrganization();
+        $connectionRequest = ConnectionRequest::find($validated['request_id']);
+
+        if (is_null($connectionRequest)) {
+            return response()->json('Connection request not found.', 404);
+        }
+
+        $requesterOrganization = Organization::find($connectionRequest->requester_organization_id);
+
+        if (is_null($requesterOrganization)) {
+            return response()->json('Requester organization not found.', 404);
+        }
+
+        if ($connectionRequest->receiver_organization_id !== $authOrg->id) {
+            return response()->json('You are not allowed to accept this connection request.', 401);
+        }
+
+        $data = [
+            'auth_organization' => $authOrg,
+            'requester_organization' => $requesterOrganization,
+            'connection_request' => $connectionRequest
+        ];
+
+        $service->acceptConnectionRequest($data);
+
+        return response()->json('Connection request accepted');
     }
 }

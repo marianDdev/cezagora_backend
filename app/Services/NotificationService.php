@@ -4,7 +4,9 @@ namespace App\Services;
 
 use App\Models\Organization;
 use App\Models\User;
+use App\Notifications\ConnectionRequestAccepted;
 use App\Notifications\ConnectionRequestReceived;
+use Illuminate\Support\Facades\Auth;
 
 class NotificationService
 {
@@ -15,7 +17,7 @@ class NotificationService
         $this->organizationService = $organizationService;
     }
 
-    public function notifyAboutConnectionRequestReceived(Organization $receiver): void
+    public function sendConnectionRequestReceivedEmail(Organization $receiver): void
     {
         $authOrganization = $this->organizationService->getAuthOrganization();
 
@@ -26,5 +28,17 @@ class NotificationService
         ];
 
         $receiver->user->notify(new ConnectionRequestReceived($email));
+    }
+
+    public function sendConnectionRequestAcceptedEmail(
+        string $requesterOrganizationName,
+        string $authOrganizationName,
+        string $authOrganizationType = null
+    ): void
+    {
+        /** @var User $authUser */
+        $authUser = Auth::user();
+
+        $authUser->notify(new ConnectionRequestAccepted($requesterOrganizationName, $authOrganizationName, $authOrganizationType));
     }
 }

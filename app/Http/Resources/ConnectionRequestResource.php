@@ -20,6 +20,7 @@ class ConnectionRequestResource extends JsonResource
         $name = $organization->name;
 
         return [
+            'id' => $this->id,
             'name' => $name,
             'avatar' => $avatarUrl
         ];
