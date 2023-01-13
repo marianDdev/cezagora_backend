@@ -112,12 +112,12 @@ class Organization extends Model implements HasMedia
 
     public function connectionRequestsSent(): HasMany
     {
-        return $this->hasMany(ConnectionRequest::class, 'requester_id', 'id');
+        return $this->hasMany(ConnectionRequest::class, 'requester_organization_id', 'id');
     }
 
     public function connectionRequestsReceived(): HasMany
     {
-        return $this->hasMany(ConnectionRequest::class, 'receiver_id', 'id');
+        return $this->hasMany(ConnectionRequest::class, 'receiver_organization_id', 'id');
     }
 
     public function connections(): HasMany

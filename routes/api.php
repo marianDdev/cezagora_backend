@@ -78,7 +78,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
                 function () {
                     Route::get('/', [ConnectionRequestController::class, 'list'])->name('connection.requests.list');
                     Route::post('/', [ConnectionRequestController::class, 'create'])->name('connections.request.create');
-                    Route::post('/{connectionRequestid}/accept', [ConnectionRequestController::class, 'acceptRequest'])->name('connections.request.accept');
+                    Route::post('/accept', [ConnectionRequestController::class, 'acceptRequest'])->name('connections.request.accept');
                 }
             );
         }

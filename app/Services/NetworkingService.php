@@ -45,50 +45,33 @@ class NetworkingService
 
         $this->follow($authOrg->id, $receiver->id);
 
-        $this->notificationService->notifyAboutConnectionRequestReceived($receiver);
+        $this->notificationService->sendConnectionRequestReceivedEmail($receiver);
 
         return $newConnectionRequest;
     }
 
-    /**
-     * once the connection request is accepted and the networking connection is established
-     * the connection request will be deleted
-     *
-     * @param int $connectionRequestid
-     *
-     * @return ConnectionResource|JsonResponse
-     */
-    public function acceptConnectionRequest(int $connectionRequestid): ConnectionResource|JsonResponse
+    public function acceptConnectionRequest(array $data): void
     {
-        /** @var User $authUser */
-        $authUser              = Auth::user();
-        $authOrg               = $this->organizationService->getAuthOrganization();
-        $connectionRequest     = ConnectionRequest::find($connectionRequestid);
-        $requesterOrganization = Organization::find($connectionRequest->requester_organization_id);
+        $authOrg               = $data['auth_organization'];
+        $connectionRequest     = $data['connection_request'];
+        $requesterOrganization = $data['requester_organization'];
 
-        if ($connectionRequest->receiver_organization_id !== $authOrg->id) {
-            return response()->json(['You are now allowed to accept this connection request.'], 401);
-        }
 
-        $connection = $this->createConnection(
+        //todo check if the connection already exists
+        $this->createConnection(
             [
                 'organization_id'           => $authOrg->id,
                 'connected_organization_id' => $requesterOrganization->id,
             ]
         );
 
+        $this->notificationService->sendConnectionRequestAcceptedEmail(
+            $requesterOrganization->name,
+            $authOrg->name,
+            $authOrg->type
+        );
 
-        $email = [
-            'receiver'          => $requesterOrganization->name,
-            'organization_type' => $authOrg->type,
-            'organization_name' => $authOrg->name,
-        ];
-
-
-        $authUser->notify(new ConnectionRequestAccepted($email));
         $connectionRequest->delete();
-
-        return $connection;
     }
 
     public function getFollowing(int $followedOrganizationId)

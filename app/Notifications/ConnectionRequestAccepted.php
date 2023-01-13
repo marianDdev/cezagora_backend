@@ -3,7 +3,6 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
@@ -11,16 +10,25 @@ class ConnectionRequestAccepted extends Notification
 {
     use Queueable;
 
-    private array $data;
+    private string $requesterOrganizationName;
+    private string $authOrganizationType;
+    private ?string  $authOrganizationName;
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct(array $data)
+    public function __construct(
+        string $requesterOrganizationName,
+        string $authOrganizationType,
+        string $authOrganizationName = null
+    )
     {
-        $this->data = $data;
+
+        $this->requesterOrganizationName = $requesterOrganizationName;
+        $this->authOrganizationType = $authOrganizationType;
+        $this->authOrganizationName = $authOrganizationName;
     }
 
     /**
@@ -46,8 +54,8 @@ class ConnectionRequestAccepted extends Notification
     {
         return (new MailMessage)
             ->from(env('MAIL_FROM_ADDRESS'))
-            ->greeting(sprintf('Hello, %s', $this->data['receiver']))
-            ->line(sprintf('%s %s accepted your connection request.', $this->data['organization_type'], $this->data['organization_name']))
+            ->greeting(sprintf('Hello, %s', $this->requesterOrganizationName))
+            ->line(sprintf('%s %s accepted your connection request.', $this->authOrganizationType, $this->authOrganizationName))
             ->action('Click here to see his Cezagora profile', url('/'))
             ->line('Thank you for using Cezagora!');
     }
