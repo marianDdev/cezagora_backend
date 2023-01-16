@@ -10,6 +10,7 @@ use App\Http\Controllers\Auth\AuthenticationController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\ConnectionController;
 use App\Http\Controllers\ConnectionRequestController;
 use App\Http\Controllers\CosmeticsEventController;
 use App\Http\Controllers\FollowerController;
@@ -73,12 +74,14 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::group(
         ['prefix' => '/connections'],
         function () {
+            Route::get('/', [ConnectionController::class, 'list'])->name('connection.list');
             Route::group(
                 ['prefix' => '/requests'],
                 function () {
                     Route::get('/', [ConnectionRequestController::class, 'list'])->name('connection.requests.list');
-                    Route::post('/', [ConnectionRequestController::class, 'create'])->name('connections.request.create');
-                    Route::post('/accept', [ConnectionRequestController::class, 'acceptRequest'])->name('connections.request.accept');
+                    Route::post('/', [ConnectionRequestController::class, 'send'])->name('connections.request.create');
+                    Route::post('/accept', [ConnectionRequestController::class, 'accept'])->name('connections.request.accept');
+                    Route::delete('/{requestId}', [ConnectionRequestController::class, 'decline'])->name('connections.request.decline');
                 }
             );
         }
