@@ -20,7 +20,8 @@ class ConnectionResource extends JsonResource
         return [
             'name' => $connection->name,
             'type' => $connection->type,
-            'avatar_url' => $connection->getFirstMediaUrl('profile_picture')
+            'avatar_url' => $connection->getFirstMediaUrl('profile_picture'),
+            'background_url' => $connection->getFirstMediaUrl('background_picture'),
         ];
     }
 }
