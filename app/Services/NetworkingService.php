@@ -25,29 +25,18 @@ class NetworkingService
         $this->notificationService = $notificationService;
     }
 
-    /**
-     * @throws Exception
-     */
-    public function createConnectionRequest(Organization $authOrg, Organization $receiver): ConnectionRequest
+    public function createConnectionRequest(Organization $authOrg, Organization $receiver): void
     {
-        $hasLists = $authOrg->getMedia('lists') !== null;
-
-        if (!$authOrg->has_details_completed || !$hasLists) {
-            throw new Exception("you can't make connection request if you didn't add your company details or didn't upload stock lists.");
-        }
-
         $data = [
             'receiver_organization_id'  => $receiver->id,
             'requester_organization_id' => $authOrg->id,
         ];
 
-        $newConnectionRequest = ConnectionRequest::create($data);
+        ConnectionRequest::create($data);
 
         $this->follow($authOrg->id, $receiver->id);
 
         $this->notificationService->sendConnectionRequestReceivedEmail($receiver);
-
-        return $newConnectionRequest;
     }
 
     public function acceptConnectionRequest(array $data): void
