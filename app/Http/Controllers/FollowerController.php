@@ -2,12 +2,30 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\FollowerResourceCollection;
+use App\Http\Resources\FollowingResourceCollection;
 use App\Services\NetworkingService;
 use App\Services\OrganizationService;
 use Illuminate\Http\JsonResponse;
 
 class FollowerController extends Controller
 {
+    public function followingList(OrganizationService $organizationService): FollowingResourceCollection
+    {
+        $authOrganization = $organizationService->getAuthOrganization();
+        $followings = $authOrganization->followings;
+
+        return new FollowingResourceCollection($followings);
+    }
+
+    public function followersList(OrganizationService $organizationService): FollowerResourceCollection
+    {
+        $authOrganization = $organizationService->getAuthOrganization();
+        $followers = $authOrganization->followers;
+
+        return new FollowerResourceCollection($followers);
+    }
+
     public function follow(
         OrganizationService $organizationService,
         NetworkingService $networkingService,

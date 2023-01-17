@@ -86,6 +86,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
             );
         }
     );
+    //todo send org id in request body
+    Route::get('/followings', [FollowerController::class, 'followingList'])->name('followings.list');
+    Route::get('/followers', [FollowerController::class, 'followersList'])->name('followers.list');
     Route::post('/{organizationId}/follow', [FollowerController::class, 'follow'])->name('follow.create');
     Route::delete('/{organizationId}/unfollow', [FollowerController::class, 'unFollow'])->name('follow.delete');
     Route::get('/networking/status/{organizationId}', [NetworkingController::class, 'getStatusByOrganizationId'])->name('networking_status.by_organization_id');
