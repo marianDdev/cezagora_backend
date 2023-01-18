@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\FollowRequest;
 use App\Http\Resources\FollowerResourceCollection;
 use App\Http\Resources\FollowingResourceCollection;
 use App\Services\NetworkingService;
@@ -27,15 +28,16 @@ class FollowerController extends Controller
     }
 
     public function follow(
+        FollowRequest $request,
         OrganizationService $organizationService,
         NetworkingService $networkingService,
-        int $followedOrganizationId
     ): JsonResponse
     {
+        $validated = $request->validated();
         $authOrganizationid = $organizationService->getAuthOrganization()->id;
-        $existingFollow = $networkingService->getFollowing($followedOrganizationId);
+        $existingFollow = $networkingService->getFollowing($validated['organization_id']);
 
-        if ($followedOrganizationId === $authOrganizationid) {
+        if ($validated['organization_id'] === $authOrganizationid) {
             return response()->json('You are trying to follow your own company.', 401);
         }
 

@@ -3,8 +3,10 @@
 namespace App\Services;
 
 use App\Models\Organization;
+use App\Models\User;
 use Exception;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 
 class SearchService
 {
@@ -22,12 +24,17 @@ class SearchService
      */
     public function getAll(array $filters, ?int $limit = null): Collection
     {
+        /** @var User $authUser */
+        $authUser           = Auth::user();
+        $authOrganizationId = $authUser->organization->id;
+
         /** @var Collection $collection */
-        $collection = Organization::when(!empty($filters['keyword']), function ($query) use ($filters) {
-            return $query
-                ->where('name', 'LIKE', "%{$filters['keyword']}%")
-                ->orWhereJsonContains('products_categories', $filters['keyword']);
-        })
+        $collection = Organization::where('id', '!=', $authOrganizationId)
+                                  ->when(!empty($filters['keyword']), function ($query) use ($filters) {
+                                      return $query
+                                          ->where('name', 'LIKE', "%{$filters['keyword']}%")
+                                          ->orWhereJsonContains('products_categories', $filters['keyword']);
+                                  })
                                   ->when(!empty($filters['company_types']), function ($query) use ($filters) {
                                       return $query->whereJsonContains('company_types', $filters['type']);
                                   })
@@ -56,8 +63,8 @@ class SearchService
                 $item->following = $networkingStats['followed'];
                 $item->connected = $networkingStats['connected'];
 
-                $item->lists             = $item->getMedia('lists');
-                $item->avatar = $item->getFirstMediaUrl('profile_picture');
+                $item->lists      = $item->getMedia('lists');
+                $item->avatar     = $item->getFirstMediaUrl('profile_picture');
                 $item->background = $item->getFirstMediaUrl('background_picture');
             }
         }
