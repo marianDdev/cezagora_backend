@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Organization;
+use App\Models\Company;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
@@ -17,7 +17,7 @@ class FollowRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'organization_id' => ['required', 'integer', Rule::exists(Organization::class, 'id')]
+            'company_id' => ['required', 'integer', Rule::exists(Company::class, 'id')]
         ];
     }
 }

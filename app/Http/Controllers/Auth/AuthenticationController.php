@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\RegisterRequest;
+use App\Http\Resources\AuthResponseResource;
 use App\Models\User;
 use App\Services\AuthService;
 use Illuminate\Auth\Events\Registered;
@@ -13,27 +14,26 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthenticationController extends Controller
 {
-    public function register(
-        RegisterRequest $request,
-        AuthService $authService
-    ): array
-    {
-        $userId = $authService->register($request->validated());
-        $user = User::find($userId);
+    public function register(RegisterRequest $request): array {
+        $validated = $request->validated();
+        $user      = User::create($validated);
         event(new Registered($user));
 
         Auth::login($user);
 
-        $userOrganization = $user->organization;
         $token = $user->createToken('auth_token')->plainTextToken;
 
-        return $authService->responseData($user, $userOrganization, $token);
+        return [
+            'token' => $token,
+            'user'  => $user,
+        ];
     }
 
     public function login(
-        Request $request,
+        Request     $request,
         AuthService $authService,
-    ): array|JsonResponse {
+    ): array|JsonResponse
+    {
         if (!Auth::attempt($request->only('email', 'password'))) {
             return response()->json([
                                         'message' => 'Invalid login details',
@@ -42,13 +42,14 @@ class AuthenticationController extends Controller
 
         $user = User::where('email', $request['email'])->firstOrFail();
 
-        $token = $user->createToken('auth_token')->plainTextToken;
-        $userOrganization = $user->organization;
+        $token            = $user->createToken('auth_token')->plainTextToken;
+        $userCompany = $user->company;
 
-        return $authService->responseData($user, $userOrganization, $token);
+        return $authService->responseData($user, $userCompany, $token);
     }
 
-    public function adminLogin(Request $request): JsonResponse {
+    public function adminLogin(Request $request): JsonResponse
+    {
         if (!Auth::attempt($request->only('email', 'password'))) {
             return response()->json([
                                         'message' => 'Invalid login details',

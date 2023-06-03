@@ -16,30 +16,9 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  * @property string  $type
  * @property integer $id
  */
-class Organization extends Model implements HasMedia
+class Company extends Model implements HasMedia
 {
     use HasFactory, InteractsWithMedia;
-
-    protected $casts = [
-        'products_categories' => AsCollection::class,
-        'selling_methods'     => 'array',
-        'company_types'        => "array",
-        'marketplaces'        => AsCollection::class,
-    ];
-
-    protected $fillable = [
-        'name',
-        'email',
-        'phone',
-        'continent',
-        'country',
-        'city',
-        'address',
-        'products_categories',
-        'selling_methods',
-        'marketplaces',
-        'company_types',
-    ];
 
     const IN_STORE_METHOD       = 'in_store';
     const ONLINE_SHOP_METHOD    = 'online_shop';
@@ -85,6 +64,27 @@ class Organization extends Model implements HasMedia
 
     const CONTINENTS = ['Africa', 'Asia', 'Europe', 'North America', 'Oceania', 'South America'];
 
+    protected $casts = [
+        'products_categories' => AsCollection::class,
+        'selling_methods'     => 'array',
+        'company_types'        => "array",
+        'marketplaces'        => AsCollection::class,
+    ];
+
+    protected $fillable = [
+        'name',
+        'email',
+        'phone',
+        'continent',
+        'country',
+        'city',
+        'address',
+        'products_categories',
+        'selling_methods',
+        'marketplaces',
+        'company_types',
+    ];
+
     public function retailer(): HasOne
     {
         return $this->hasOne(Retailer::class);
@@ -112,12 +112,12 @@ class Organization extends Model implements HasMedia
 
     public function connectionRequestsSent(): HasMany
     {
-        return $this->hasMany(ConnectionRequest::class, 'requester_organization_id', 'id');
+        return $this->hasMany(ConnectionRequest::class, 'requester_company_id', 'id');
     }
 
     public function connectionRequestsReceived(): HasMany
     {
-        return $this->hasMany(ConnectionRequest::class, 'receiver_organization_id', 'id');
+        return $this->hasMany(ConnectionRequest::class, 'receiver_company_id', 'id');
     }
 
     public function connections(): HasMany
@@ -127,12 +127,12 @@ class Organization extends Model implements HasMedia
 
     public function followers(): HasMany
     {
-        return $this->hasMany(Follower::class, 'followed_organization_id', 'id');
+        return $this->hasMany(Follower::class, 'followed_company_id', 'id');
     }
 
     public function followings(): HasMany
     {
-        return $this->hasMany(Follower::class, 'follower_organization_id', 'id');
+        return $this->hasMany(Follower::class, 'follower_company_id', 'id');
     }
 
     public function hasAttribute(string $key): bool
@@ -142,7 +142,7 @@ class Organization extends Model implements HasMedia
 
     public function threads(): BelongsToMany
     {
-        return $this->belongsToMany(Organization::class);
+        return $this->belongsToMany(Company::class);
     }
 
     public function messages(): HasMany
@@ -150,8 +150,8 @@ class Organization extends Model implements HasMedia
         return $this->hasMany(Message::class);
     }
 
-    public function posts()
+    public function companyCategory(): BelongsTo
     {
-        return $this->hasMany(Post::class, 'author_organization_id', 'id');
+        return $this->belongsTo(CompanyCategory::class);
     }
 }

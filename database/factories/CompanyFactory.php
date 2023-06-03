@@ -2,14 +2,14 @@
 
 namespace Database\Factories;
 
-use App\Models\Organization;
+use App\Models\Company;
 use App\Models\ProductsCategory;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Model>
  */
-class OrganizationFactory extends Factory
+class CompanyFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -18,15 +18,15 @@ class OrganizationFactory extends Factory
      */
     public function definition()
     {
-        $type = $this->faker->randomElement(Organization::TYPES);
+        $type = $this->faker->randomElement(Company::TYPES);
         $sellingMethods = null;
         $marketplaces = null;
 
-        if ($type === Organization::RETAILER_TYPE) {
-            $sellingMethods = $this->faker->randomElements(Organization::SELLING_METHODS);
+        if ($type === Company::RETAILER_TYPE) {
+            $sellingMethods = $this->faker->randomElements(Company::SELLING_METHODS);
 
-            if (in_array(Organization::ON_MARKETPLACE_METHOD, $sellingMethods)) {
-                $marketplaces = $this->faker->randomElement(Organization::MARKETPLACES);
+            if (in_array(Company::ON_MARKETPLACE_METHOD, $sellingMethods)) {
+                $marketplaces = $this->faker->randomElement(Company::MARKETPLACES);
             }
         }
         return [
@@ -34,7 +34,7 @@ class OrganizationFactory extends Factory
             'name' => $this->faker->company,
             'email' => $this->faker->companyEmail,
             'phone' => $this->faker->phoneNumber,
-            'continent' => $this->faker->randomElement(Organization::CONTINENTS),
+            'continent' => $this->faker->randomElement(Company::CONTINENTS),
             'country' => $this->faker->country,
             'city' => $this->faker->city,
             'address' => $this->faker->streetAddress,

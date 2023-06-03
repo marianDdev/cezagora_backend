@@ -8,10 +8,10 @@ use Illuminate\Http\JsonResponse;
 
 class NetworkingController extends Controller
 {
-    public function getStatusByOrganizationId(NetworkingService $service, int $organizationId): JsonResponse|array
+    public function getStatusByCompanyId(NetworkingService $service, int $companyId): JsonResponse|array
     {
         try {
-            return $service->getNetworkingStatusByOrganizationId($organizationId);
+            return $service->getNetworkingStatusByCompanyId($companyId);
         } catch (Exception $e) {
             return response()->json($e->getMessage(), 401);
         }

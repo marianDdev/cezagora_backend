@@ -6,9 +6,9 @@ use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
 use App\Http\Resources\PostResource;
 use App\Http\Resources\PostResourceCollection;
-use App\Models\Organization;
+use App\Models\Company;
 use App\Models\Post;
-use App\Services\OrganizationService;
+use App\Services\CompanyService;
 use Illuminate\Http\JsonResponse;
 
 class PostController extends Controller
@@ -29,24 +29,24 @@ class PostController extends Controller
         return new PostResourceCollection(Post::orderBy('created_at', 'DESC')->get());
     }
 
-    public function myPosts(OrganizationService $organizationService): PostResourceCollection
+    public function myPosts(CompanyService $companyService): PostResourceCollection
     {
-        $authorg = $organizationService->getAuthOrganization();
+        $authorg = $companyService->getAuthCompany();
 
         return new PostResourceCollection($authorg->posts);
     }
 
     public function postsByOrgId(int $orgId): PostResourceCollection
     {
-        $org = Organization::find($orgId);
+        $org = Company::find($orgId);
 
         return new PostResourceCollection($org->posts);
     }
 
-    public function create(StorePostRequest $postRequest, OrganizationService $organizationService): PostResource
+    public function create(StorePostRequest $postRequest, CompanyService $companyService): PostResource
     {
-        $author  = $organizationService->getAuthOrganization();
-        $data    = array_merge($postRequest->validated(), ['author_organization_id' => $author->id]);
+        $author  = $companyService->getAuthCompany();
+        $data    = array_merge($postRequest->validated(), ['author_company_id' => $author->id]);
         /** @var Post $newPost */
         $newPost = Post::create($data);
 
@@ -63,10 +63,10 @@ class PostController extends Controller
 
     public function update(
         UpdatePostRequest $updatePostRequest,
-        OrganizationService $organizationService,
+        CompanyService $companyService,
         int $id
     ): PostResource|JsonResponse {
-        $authOrg = $organizationService->getAuthOrganization();
+        $authOrg = $companyService->getAuthCompany();
 
         /** @var Post $post */
         $post = Post::find($id) ?? abort(404, 'Post not found');
@@ -100,9 +100,9 @@ class PostController extends Controller
         return new PostResource($post);
     }
 
-    public function delete(OrganizationService $organizationService, int $id): JsonResponse
+    public function delete(CompanyService $companyService, int $id): JsonResponse
     {
-        $authOrg = $organizationService->getAuthOrganization();
+        $authOrg = $companyService->getAuthCompany();
         $post = Post::find($id) ?? abort(404, 'Post not found');
 
         if (!is_null($post)) {

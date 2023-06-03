@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -11,15 +10,16 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
 /**
- * @property Organization $organization
+ * @property Company $company
  */
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
     protected $fillable = [
-        'organization_id',
-        'company_name',
+        'first_name',
+        'last_name',
+        'company_id',
         'email',
         'password',
         'is_admin',
@@ -34,29 +34,29 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function organization(): BelongsTo
+    public function company(): BelongsTo
     {
-        return $this->belongsTo(Organization::class);
+        return $this->belongsTo(Company::class);
     }
 
     public function isRetailer()
     {
-        return $this->organization->type = Organization::RETAILER_TYPE;
+        return $this->company->type = Company::RETAILER_TYPE;
     }
 
     public function isDistributor()
     {
-        return $this->organization->type = Organization::DISTRIBUTOR_TYPE;
+        return $this->company->type = Company::DISTRIBUTOR_TYPE;
     }
 
     public function isWholeSaler()
     {
-        return $this->organization->type = Organization::WHOLESALER_TYPE;
+        return $this->company->type = Company::WHOLESALER_TYPE;
     }
 
     public function isManufacturer()
     {
-        return $this->organization->type = Organization::MANUFACTURER_TYPE;
+        return $this->company->type = Company::MANUFACTURER_TYPE;
     }
 
     public function connectionRequests(): HasMany
@@ -72,6 +72,16 @@ class User extends Authenticatable
     public function connections(): HasMany
     {
         return $this->hasMany(Connection::class);
+    }
+
+    public function posts(): HasMany
+    {
+        return $this->hasMany(Post::class);
+    }
+
+    public function comments(): HasMany
+    {
+        return $this->hasMany(Comment::class);
     }
 
     public function hasConnections(): bool

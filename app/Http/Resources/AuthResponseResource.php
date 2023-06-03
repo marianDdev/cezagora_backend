@@ -16,7 +16,7 @@ class AuthResponseResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'organization'      => new OrganizationResource($this['organization']),
+            'company'      => new CompanyResource($this['company']),
             'user'              => new UserResource($this['user']),
             'profile_picture'   => $this['profile_picture'],
             'background_picture'   => $this['background_picture'],

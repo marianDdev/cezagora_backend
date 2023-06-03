@@ -14,14 +14,14 @@ class Post extends Model implements HasMedia
     use HasFactory, InteractsWithMedia;
 
     protected $fillable = [
-      'author_organization_id',
+      'author_company_id',
       'title',
       'text'
     ];
 
     public function author(): BelongsTo
     {
-        return $this->belongsTo(Organization::class, 'author_organization_id', 'id');
+        return $this->belongsTo(User::class);
     }
 
     public function comments(): HasMany

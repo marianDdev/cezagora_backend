@@ -11,11 +11,11 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class MediaService
 {
-    private OrganizationService $organizationService;
+    private CompanyService $companyService;
 
-    public function __construct(OrganizationService $organizationService)
+    public function __construct(CompanyService $companyService)
     {
-        $this->organizationService = $organizationService;
+        $this->companyService = $companyService;
     }
 
     /**
@@ -23,7 +23,7 @@ class MediaService
      */
     public function uploadList(Request $request): JsonResponse
     {
-        $authOrg = $this->organizationService->getAuthOrganization();
+        $authOrg = $this->companyService->getAuthCompany();
         if ($request->hasFile('list') && $request->file('list')->isValid()) {
             $authOrg->addMediaFromRequest('list')
                     ->toMediaCollection('lists');
@@ -49,7 +49,7 @@ class MediaService
      */
     public function uploadProfilePicture(Request $request): JsonResponse
     {
-        $authOrg = $this->organizationService->getAuthOrganization();
+        $authOrg = $this->companyService->getAuthCompany();
         if ($request->hasFile('profile_picture') && $request->file('profile_picture')->isValid()) {
             if (!is_null($authOrg->getMedia('profile_picture'))) {
                 /** @var Media $media */
@@ -80,7 +80,7 @@ class MediaService
      */
     public function uploadBackgroundPicture(Request $request): JsonResponse
     {
-        $authOrg = $this->organizationService->getAuthOrganization();
+        $authOrg = $this->companyService->getAuthCompany();
         if ($request->hasFile('background_picture') && $request->file('background_picture')->isValid()) {
             if (!is_null($authOrg->getMedia('background_picture'))) {
                 /** @var Media $media */

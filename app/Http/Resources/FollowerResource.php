@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources;
 
-use App\Models\Organization;
+use App\Models\Company;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class FollowerResource extends JsonResource
@@ -15,14 +15,14 @@ class FollowerResource extends JsonResource
      */
     public function toArray($request)
     {
-        $followingOrganization = Organization::find($this->follower_organization_id);
+        $followingCompany = Company::find($this->follower_company_id);
 
         return [
-            'id' => $followingOrganization->id,
-            'name' => $followingOrganization->name,
-            'type' => $followingOrganization->type,
-            'avatar_url' => $followingOrganization->getFirstMediaUrl('profile_picture'),
-            'background_url' => $followingOrganization->getFirstMediaUrl('background_picture'),
+            'id' => $followingCompany->id,
+            'name' => $followingCompany->name,
+            'type' => $followingCompany->type,
+            'avatar_url' => $followingCompany->getFirstMediaUrl('profile_picture'),
+            'background_url' => $followingCompany->getFirstMediaUrl('background_picture'),
         ];
     }
 }

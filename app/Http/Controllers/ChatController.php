@@ -6,7 +6,7 @@ use App\Events\MessageEvent;
 use App\Http\Requests\StoreMessageRequest;
 use App\Http\Resources\ThreadResourceCollection;
 use App\Models\Message;
-use App\Models\Organization;
+use App\Models\Company;
 use App\Models\User;
 use App\Services\ChatService;
 use Illuminate\Http\JsonResponse;
@@ -16,18 +16,18 @@ class ChatController extends Controller
 {
     public function getMyThreads(ChatService $service): ThreadResourceCollection
     {
-        $authOrg = $this->authOrganization();
+        $authOrg = $this->authCompany();
         $myThreads = $service->getMyThreads($authOrg);
 
         return new ThreadResourceCollection($myThreads);
     }
 
-    public function getMessagesByOtherOrganizationId(int $otherOrganizationId, ChatService $chatService): array
+    public function getMessagesByOtherCompanyId(int $otherCompanyId, ChatService $chatService): array
     {
-        $interlocutor = Organization::find($otherOrganizationId);
+        $interlocutor = Company::find($otherCompanyId);
         $interlocutorAvatar = $interlocutor->getFirstMediaUrl('profile_picture');
-        $authOrganizationId = $this->authOrganization()->id;
-        $thread             = $chatService->getThreadByOtherOrganizationId($authOrganizationId, $otherOrganizationId);
+        $authCompanyId = $this->authCompany()->id;
+        $thread             = $chatService->getThreadByOtherCompanyId($authCompanyId, $otherCompanyId);
 
         $messagesArray           = [];
 
@@ -47,14 +47,14 @@ class ChatController extends Controller
         $validated = $request->validated();
 
         $message             = $validated['message'];
-        $otherOrganizationId = $validated['interlocutor_id'];
-        $authOrganizationId  = $this->authOrganization()->id;
+        $otherCompanyId = $validated['interlocutor_id'];
+        $authCompanyId  = $this->authCompany()->id;
 
-        event(new MessageEvent($otherOrganizationId, $message));
+        event(new MessageEvent($otherCompanyId, $message));
 
-        $thread = $chatService->createThread($authOrganizationId, $otherOrganizationId);
+        $thread = $chatService->createThread($authCompanyId, $otherCompanyId);
 
-        $message = $chatService->createMessage($authOrganizationId, $thread, $message);
+        $message = $chatService->createMessage($authCompanyId, $thread, $message);
 
         return response()->json(
             [
@@ -64,11 +64,11 @@ class ChatController extends Controller
         );
     }
 
-    private function authOrganization(): Organization
+    private function authCompany(): Company
     {
         /** @var User $authUser */
         $authUser = Auth::user();
 
-        return $authUser->organization;
+        return $authUser->company;
     }
 }

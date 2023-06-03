@@ -2,22 +2,22 @@
 
 namespace App\Services;
 
-use App\Models\Organization;
+use App\Models\Company;
 use Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection;
 
 class ListsService
 {
-    private OrganizationService $organizationService;
+    private CompanyService $companyService;
 
-    public function __construct(OrganizationService $organizationService)
+    public function __construct(CompanyService $companyService)
     {
-        $this->organizationService = $organizationService;
+        $this->companyService = $companyService;
     }
 
-    public function getListsByOrganizationId(int $organizationId): MediaCollection
+    public function getListsByCompanyId(int $companyId): MediaCollection
     {
-        $organization = Organization::find($organizationId);
+        $company = Company::find($companyId);
 
-        return $organization->getMedia('lists');
+        return $company->getMedia('lists');
     }
 }

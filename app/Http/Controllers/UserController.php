@@ -15,7 +15,7 @@ class UserController extends Controller
 
         return $service->responseData(
             $user,
-            $user->organization,
+            $user->company,
             $user->currentAccessToken()->token
         );
     }

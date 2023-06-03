@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Services\MediaService;
-use App\Services\OrganizationService;
+use App\Services\CompanyService;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -12,9 +12,9 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class ListsController extends Controller
 {
-    public function listAll(OrganizationService $service): MediaCollection
+    public function listAll(CompanyService $service): MediaCollection
     {
-        $authorg = $service->getAuthOrganization();
+        $authorg = $service->getAuthCompany();
 
         return $authorg->getMedia('lists');
     }

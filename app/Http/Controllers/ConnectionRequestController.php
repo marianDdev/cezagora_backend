@@ -7,17 +7,17 @@ use App\Http\Requests\StoreConnectionInvitationRequest;
 use App\Http\Resources\ConnectionRequestResource;
 use App\Http\Resources\ConnectionRequestResourceCollection;
 use App\Models\ConnectionRequest;
-use App\Models\Organization;
+use App\Models\Company;
 use App\Services\NetworkingService;
-use App\Services\OrganizationService;
+use App\Services\CompanyService;
 use Exception;
 use Illuminate\Http\JsonResponse;
 
 class ConnectionRequestController extends Controller
 {
-    public function list(OrganizationService $organizationService): ConnectionRequestResourceCollection
+    public function list(CompanyService $companyService): ConnectionRequestResourceCollection
     {
-        $authOrg  = $organizationService->getAuthOrganization();
+        $authOrg  = $companyService->getAuthCompany();
         $requests = $authOrg->connectionRequestsReceived->sortByDesc('created_at');
 
         return new ConnectionRequestResourceCollection($requests);
@@ -26,19 +26,19 @@ class ConnectionRequestController extends Controller
     public function send(
         StoreConnectionInvitationRequest $request,
         NetworkingService                $service,
-        OrganizationService              $organizationService
+        CompanyService              $companyService
     ): ConnectionRequestResource|JsonResponse
     {
         $validated = $request->validated();
-        $receiver  = Organization::find($validated['receiver_id']);
-        $authOrg   = $organizationService->getAuthOrganization();
+        $receiver  = Company::find($validated['receiver_id']);
+        $authOrg   = $companyService->getAuthCompany();
 
         if (is_null($receiver)) {
             return response()->json('Company not found.', 404);
         }
 
-        $existingrequest = ConnectionRequest::where('receiver_organization_id', $receiver->id)
-                                            ->where('requester_organization_id', $authOrg->id)
+        $existingrequest = ConnectionRequest::where('receiver_company_id', $receiver->id)
+                                            ->where('requester_company_id', $authOrg->id)
                                             ->first();
 
         $hasLists = $authOrg->getMedia('lists') !== null;
@@ -59,30 +59,30 @@ class ConnectionRequestController extends Controller
     public function accept(
         AcceptConnectionRequest $request,
         NetworkingService       $service,
-        OrganizationService     $organizationService
+        CompanyService     $companyService
     ): JsonResponse
     {
         $validated         = $request->validated();
-        $authOrg           = $organizationService->getAuthOrganization();
+        $authOrg           = $companyService->getAuthCompany();
         $connectionRequest = ConnectionRequest::find($validated['request_id']);
 
         if (is_null($connectionRequest)) {
             return response()->json('Connection request not found.', 404);
         }
 
-        $requesterOrganization = Organization::find($connectionRequest->requester_organization_id);
+        $requesterCompany = Company::find($connectionRequest->requester_company_id);
 
-        if (is_null($requesterOrganization)) {
-            return response()->json('Requester organization not found.', 404);
+        if (is_null($requesterCompany)) {
+            return response()->json('Requester company not found.', 404);
         }
 
-        if ($connectionRequest->receiver_organization_id !== $authOrg->id) {
+        if ($connectionRequest->receiver_company_id !== $authOrg->id) {
             return response()->json('You are not allowed to accept this connection request.', 401);
         }
 
         $data = [
-            'auth_organization'      => $authOrg,
-            'requester_organization' => $requesterOrganization,
+            'auth_company'      => $authOrg,
+            'requester_company' => $requesterCompany,
             'connection_request'     => $connectionRequest,
         ];
 

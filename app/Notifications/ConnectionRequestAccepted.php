@@ -10,9 +10,9 @@ class ConnectionRequestAccepted extends Notification
 {
     use Queueable;
 
-    private string $requesterOrganizationName;
-    private string $authOrganizationType;
-    private ?string  $authOrganizationName;
+    private string $requesterCompanyName;
+    private string $authCompanyType;
+    private ?string  $authCompanyName;
 
     /**
      * Create a new notification instance.
@@ -20,15 +20,15 @@ class ConnectionRequestAccepted extends Notification
      * @return void
      */
     public function __construct(
-        string $requesterOrganizationName,
-        string $authOrganizationType,
-        string $authOrganizationName = null
+        string $requesterCompanyName,
+        string $authCompanyType,
+        string $authCompanyName = null
     )
     {
 
-        $this->requesterOrganizationName = $requesterOrganizationName;
-        $this->authOrganizationType = $authOrganizationType;
-        $this->authOrganizationName = $authOrganizationName;
+        $this->requesterCompanyName = $requesterCompanyName;
+        $this->authCompanyType = $authCompanyType;
+        $this->authCompanyName = $authCompanyName;
     }
 
     /**
@@ -54,8 +54,8 @@ class ConnectionRequestAccepted extends Notification
     {
         return (new MailMessage)
             ->from(env('MAIL_FROM_ADDRESS'))
-            ->greeting(sprintf('Hello, %s', $this->requesterOrganizationName))
-            ->line(sprintf('%s %s accepted your connection request.', $this->authOrganizationType, $this->authOrganizationName))
+            ->greeting(sprintf('Hello, %s', $this->requesterCompanyName))
+            ->line(sprintf('%s %s accepted your connection request.', $this->authCompanyType, $this->authCompanyName))
             ->action('Click here to see his Cezagora profile', url('/'))
             ->line('Thank you for using Cezagora!');
     }
