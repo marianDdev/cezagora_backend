@@ -3,58 +3,58 @@
 namespace App\Services;
 
 use App\Models\Message;
-use App\Models\Organization;
+use App\Models\Company;
 use App\Models\Thread;
 use Illuminate\Support\Collection;
 
 class ChatService
 {
-    public function createThread(int $authOrganizationId, int $otherOrganizationId): Thread
+    public function createThread(int $authCompanyId, int $otherCompanyId): Thread
     {
-        $thread = $this->getThreadByOtherOrganizationId($authOrganizationId, $otherOrganizationId);
+        $thread = $this->getThreadByOtherCompanyId($authCompanyId, $otherCompanyId);
 
         if (is_null($thread)) {
-            $thread = Thread::create(['first_organization_id' => $authOrganizationId, 'second_organization_id' => $otherOrganizationId]);
+            $thread = Thread::create(['first_company_id' => $authCompanyId, 'second_company_id' => $otherCompanyId]);
         }
 
         return $thread;
     }
 
-    public function createMessage(int $authOrganizationId, Thread $thread,  string $message): Message
+    public function createMessage(int $authCompanyId, Thread $thread,  string $message): Message
     {
         return Message::create(
             [
-                'author_id' => $authOrganizationId,
+                'author_id' => $authCompanyId,
                 'thread_id' => $thread->id,
                 'body' => $message,
             ]
         );
     }
 
-    public function getThreadByOtherOrganizationId(int $authOrganizationId, int $otherOrganizationId): ?Thread
+    public function getThreadByOtherCompanyId(int $authCompanyId, int $otherCompanyId): ?Thread
     {
         return Thread::where(
-            function ($query) use ($authOrganizationId, $otherOrganizationId) {
+            function ($query) use ($authCompanyId, $otherCompanyId) {
                 $query->where(
-                    function ($q) use ($authOrganizationId, $otherOrganizationId) {
-                        $q->where('first_organization_id', $authOrganizationId)
-                          ->where('second_organization_id', $otherOrganizationId);
+                    function ($q) use ($authCompanyId, $otherCompanyId) {
+                        $q->where('first_company_id', $authCompanyId)
+                          ->where('second_company_id', $otherCompanyId);
                     }
                 )
                       ->orWhere(
-                          function ($q) use ($authOrganizationId, $otherOrganizationId) {
-                              $q->where('first_organization_id', $otherOrganizationId)
-                                ->where('second_organization_id', $authOrganizationId);
+                          function ($q) use ($authCompanyId, $otherCompanyId) {
+                              $q->where('first_company_id', $otherCompanyId)
+                                ->where('second_company_id', $authCompanyId);
                           }
                       );
             }
         )->first();
     }
 
-    public function getMyThreads(Organization $authOrg): Collection
+    public function getMyThreads(Company $authOrg): Collection
     {
-        $myThreads = Thread::where('first_organization_id', $authOrg->id)
-              ->orWhere('second_organization_id', $authOrg->id)
+        $myThreads = Thread::where('first_company_id', $authOrg->id)
+              ->orWhere('second_company_id', $authOrg->id)
               ->get();
 
         $this->mapExtraFieldsToThread($myThreads, $authOrg);
@@ -62,18 +62,18 @@ class ChatService
         return $myThreads;
     }
 
-    private function mapExtraFieldsToThread(Collection $myThreads, Organization $authOrg): void
+    private function mapExtraFieldsToThread(Collection $myThreads, Company $authOrg): void
     {
         $myThreads->map(function ($thread) use ($authOrg) {
-            $myOrganization = Organization::find($thread->first_organization_id);
-            $interlocutor = Organization::find($thread->second_organization_id);
+            $myCompany = Company::find($thread->first_company_id);
+            $interlocutor = Company::find($thread->second_company_id);
 
-            if ($thread->second_organization_id === $authOrg->id) {
-                $myOrganization = Organization::find($thread->second_organization_id);
-                $interlocutor = Organization::find($thread->first_organization_id);
+            if ($thread->second_company_id === $authOrg->id) {
+                $myCompany = Company::find($thread->second_company_id);
+                $interlocutor = Company::find($thread->first_company_id);
             }
 
-            $myAvatarUrl = $myOrganization->getFirstMediaUrl('profile_picture');
+            $myAvatarUrl = $myCompany->getFirstMediaUrl('profile_picture');
             $interlocutorAvatarUrl = $interlocutor->getFirstMediaUrl('profile_picture');
             $interlocutorAddress = '';
             if (!is_null($interlocutor->city)) {

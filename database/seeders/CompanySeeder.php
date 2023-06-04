@@ -2,14 +2,13 @@
 
 namespace Database\Seeders;
 
-use App\Models\Organization;
+use App\Models\Company;
 use App\Models\ProductsCategory;
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 
-class OrganizationSeeder extends Seeder
+class CompanySeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -18,9 +17,9 @@ class OrganizationSeeder extends Seeder
      */
     public function run()
     {
-        Organization::create(
+        $company = Company::create(
             [
-                'company_types'       => [],
+                'company_category_id'       => null,
                 'name'                => 'Cezius Link',
                 'email'               => 'marian@cezius.tech',
                 'phone'               => '0737014770',
@@ -28,16 +27,15 @@ class OrganizationSeeder extends Seeder
                 'country'             => 'Romania',
                 'city'                => 'Bucharest',
                 'address'             => 'Str Patriotilor nr 9',
-                'products_categories' => ProductsCategory::inRandomOrder()->take(rand(1, 10))->get()->pluck('name'),
-                'selling_methods'     => [],
-                'marketplaces'        => null,
             ]
         );
 
         User::create(
             [
-                'company_name' => 'Cezius Link',
-                'organization_id' => 1,
+                'first_name' => 'Marian',
+                'last_name' => 'Dumitru',
+                'is_admin' => true,
+                'company_id' => $company->id,
                 'email' => 'marian@cezius.tech',
                 'email_verified_at' => now(),
                 'password' => '$2y$10$vCm4/r2zlSyOl6bkylqhsu.mhxP/.3q/NNXMGbZEg5MrMQk96hae6',
@@ -45,7 +43,7 @@ class OrganizationSeeder extends Seeder
             ]
         );
 
-        Organization::factory(50)
+        Company::factory(50)
                     ->has(User::factory()->count(1))
                     ->create();
     }

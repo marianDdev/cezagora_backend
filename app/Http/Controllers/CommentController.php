@@ -9,7 +9,7 @@ use App\Http\Resources\CommentResource;
 use App\Http\Resources\CommentResourceCollection;
 use App\Http\Resources\PostResource;
 use App\Models\Comment;
-use App\Services\OrganizationService;
+use App\Services\CompanyService;
 use Illuminate\Http\JsonResponse;
 use Spatie\MediaLibrary\MediaCollections\Exceptions\FileDoesNotExist;
 use Spatie\MediaLibrary\MediaCollections\Exceptions\FileIsTooBig;
@@ -32,10 +32,10 @@ class CommentController extends Controller
         return new CommentResourceCollection(Comment::where('post_id', $postId)->get());
     }
 
-    public function create(StoreCommentRequest $commentRequest, OrganizationService $organizationService): CommentResource
+    public function create(StoreCommentRequest $commentRequest, CompanyService $companyService): CommentResource
     {
-        $author     = $organizationService->getAuthOrganization();
-        $data       = array_merge($commentRequest->validated(), ['author_organization_id' => $author->id]);
+        $author     = $companyService->getAuthCompany();
+        $data       = array_merge($commentRequest->validated(), ['author_company_id' => $author->id]);
         $newComment = Comment::create($data);
 
         if (
@@ -55,11 +55,11 @@ class CommentController extends Controller
      */
     public function update(
         UpdateCommentRequest $commentRequest,
-        OrganizationService  $organizationService,
+        CompanyService  $companyService,
         int                  $id
     ): CommentResource|JsonResponse
     {
-        $authOrg = $organizationService->getAuthOrganization();
+        $authOrg = $companyService->getAuthCompany();
 
         /** @var Comment $comment */
         $comment = Comment::find($id);
@@ -95,9 +95,9 @@ class CommentController extends Controller
         return new CommentResource($comment);
     }
 
-    public function delete(OrganizationService $organizationService, int $id): JsonResponse
+    public function delete(CompanyService $companyService, int $id): JsonResponse
     {
-        $authOrg = $organizationService->getAuthOrganization();
+        $authOrg = $companyService->getAuthCompany();
         $comment = Comment::find($id);
 
         if (!is_null($comment)) {

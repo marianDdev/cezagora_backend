@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Organization;
+use App\Models\Company;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -20,8 +20,8 @@ return new class extends Migration
     {
         Schema::create('connection_requests', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('requester_organization_id');
-            $table->foreignId('receiver_organization_id');
+            $table->foreignId('user_id');
+            $table->foreignId('receiver_user_id');
             $table->timestamps();
         });
     }

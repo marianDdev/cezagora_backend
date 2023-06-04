@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::create('threads', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('first_organization_id');
-            $table->foreignId('second_organization_id');
+            $table->foreignId('first_user_id');
+            $table->foreignId('second_user_id');
             $table->timestamps();
         });
     }

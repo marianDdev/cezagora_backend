@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Company;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 
 class RegisterRequest extends FormRequest
@@ -15,8 +17,11 @@ class RegisterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'company_name'         => ['required', 'string', 'max:255'],
-            'email'         => ['required', 'string', 'email', 'max:255'],
+            'company_id' => ['nullable', 'integer', Rule::exists(Company::class, 'id')],
+            'first_name' => ['required', 'string', 'max:255'],
+            'last_name' => ['required', 'string', 'max:255'],
+            'email'         => ['required', 'email', 'max:255'],
+            'is_admin' => ['nullable', 'boolean'],
             'password'           => ['required', 'confirmed', Password::defaults()],
         ];
     }

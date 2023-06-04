@@ -8,25 +8,20 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->boolean('is_admin')->after('id')->default(false);
+        Schema::create('service_user', function (Blueprint $table) {
+            $table->foreignId('service_id');
+            $table->foreignId('user_id');
         });
     }
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-           //
-        });
+        Schema::dropIfExists('service_user');
     }
 };

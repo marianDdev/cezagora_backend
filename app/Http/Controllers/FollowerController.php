@@ -6,38 +6,38 @@ use App\Http\Requests\FollowRequest;
 use App\Http\Resources\FollowerResourceCollection;
 use App\Http\Resources\FollowingResourceCollection;
 use App\Services\NetworkingService;
-use App\Services\OrganizationService;
+use App\Services\CompanyService;
 use Illuminate\Http\JsonResponse;
 
 class FollowerController extends Controller
 {
-    public function followingList(OrganizationService $organizationService): FollowingResourceCollection
+    public function followingList(CompanyService $companyService): FollowingResourceCollection
     {
-        $authOrganization = $organizationService->getAuthOrganization();
-        $followings = $authOrganization->followings;
+        $authCompany = $companyService->getAuthCompany();
+        $followings = $authCompany->followings;
 
         return new FollowingResourceCollection($followings);
     }
 
-    public function followersList(OrganizationService $organizationService): FollowerResourceCollection
+    public function followersList(CompanyService $companyService): FollowerResourceCollection
     {
-        $authOrganization = $organizationService->getAuthOrganization();
-        $followers = $authOrganization->followers;
+        $authCompany = $companyService->getAuthCompany();
+        $followers = $authCompany->followers;
 
         return new FollowerResourceCollection($followers);
     }
 
     public function follow(
         FollowRequest $request,
-        OrganizationService $organizationService,
+        CompanyService $companyService,
         NetworkingService $networkingService,
     ): JsonResponse
     {
         $validated = $request->validated();
-        $authOrganizationid = $organizationService->getAuthOrganization()->id;
-        $existingFollow = $networkingService->getFollowing($validated['organization_id']);
+        $authCompanyid = $companyService->getAuthCompany()->id;
+        $existingFollow = $networkingService->getFollowing($validated['company_id']);
 
-        if ($validated['organization_id'] === $authOrganizationid) {
+        if ($validated['company_id'] === $authCompanyid) {
             return response()->json('You are trying to follow your own company.', 401);
         }
 
@@ -49,9 +49,9 @@ class FollowerController extends Controller
         return response()->json('Successfully following.');
     }
 
-    public function unFollow(NetworkingService $networkingService, int $followedOrganizationId): JsonResponse
+    public function unFollow(NetworkingService $networkingService, int $followedCompanyId): JsonResponse
     {
-        $existingFollowing = $networkingService->getFollowing($followedOrganizationId);
+        $existingFollowing = $networkingService->getFollowing($followedCompanyId);
 
         if (is_null($existingFollowing)) {
             return response()->json("This following doesn't exist.", 404);

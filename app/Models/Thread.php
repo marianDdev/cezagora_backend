@@ -13,16 +13,16 @@ class Thread extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['first_organization_id', 'second_organization_id'];
+    protected $fillable = ['first_user_id', 'second_user_id'];
 
-    public function firstOrganization(): BelongsTo
+    public function firstUser(): BelongsTo
     {
-        return $this->belongsTo(Organization::class, 'first_organization_id', 'id');
+        return $this->belongsTo(User::class, 'first_user_id', 'id');
     }
 
-    public function secondOrganization(): BelongsTo
+    public function secondUser(): BelongsTo
     {
-        return $this->belongsTo(Organization::class, 'second_organization_id', 'id');
+        return $this->belongsTo(User::class, 'second_user_id', 'id');
     }
 
     public function messages(): HasMany

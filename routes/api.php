@@ -16,13 +16,12 @@ use App\Http\Controllers\CosmeticsEventController;
 use App\Http\Controllers\FollowerController;
 use App\Http\Controllers\ListsController;
 use App\Http\Controllers\NetworkingController;
-use App\Http\Controllers\OrganizationController;
+use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProductsCategoryController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\Admin;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -41,14 +40,14 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::group(
         ['prefix' => '/organization'],
         function () {
-            Route::get('/organization_type/{organizationId}', [OrganizationController::class, 'getDataByOrganizationId'])->name('get.other_organization_data');
-            Route::patch('/details', [OrganizationController::class, 'update'])->name('organization.update_details');
-            Route::post('/avatar/upload', [OrganizationController::class, 'uploadProfilePicture'])->name('organization.upload_avatar');
-            Route::get('/avatar', [OrganizationController::class, 'getProfilePictureUrl'])->name('organization.get_avatar');
-            Route::get('/avatar/{organizationId}', [OrganizationController::class, 'getOtherProfilePictureUrl'])->name('organization.get_avatar');
-            Route::post('/background/upload', [OrganizationController::class, 'uploadBackgroundPicture'])->name('organization.upload_background');
-            Route::get('/background', [OrganizationController::class, 'getBackgroundPictureUrl'])->name('organization.get_background');
-            Route::get('/background/{organizationId}', [OrganizationController::class, 'getOtherBackgroundPictureUrl'])->name('organization.get_other_background');
+            Route::get('/organization_type/{organizationId}', [CompanyController::class, 'getDataByOrganizationId'])->name('get.other_organization_data');
+            Route::patch('/details', [CompanyController::class, 'update'])->name('organization.update_details');
+            Route::post('/avatar/upload', [CompanyController::class, 'uploadProfilePicture'])->name('organization.upload_avatar');
+            Route::get('/avatar', [CompanyController::class, 'getProfilePictureUrl'])->name('organization.get_avatar');
+            Route::get('/avatar/{organizationId}', [CompanyController::class, 'getOtherProfilePictureUrl'])->name('organization.get_avatar');
+            Route::post('/background/upload', [CompanyController::class, 'uploadBackgroundPicture'])->name('organization.upload_background');
+            Route::get('/background', [CompanyController::class, 'getBackgroundPictureUrl'])->name('organization.get_background');
+            Route::get('/background/{organizationId}', [CompanyController::class, 'getOtherBackgroundPictureUrl'])->name('organization.get_other_background');
 
             Route::group(
                 ['prefix' => '/lists'],

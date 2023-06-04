@@ -2,27 +2,26 @@
 
 namespace App\Http\Resources;
 
+use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use JsonSerializable;
 
 class AuthResponseResource extends JsonResource
 {
-    /**
-     * Transform the resource into an array.
-     *
-     * @param \Illuminate\Http\Request $request
-     *
-     * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
-     */
-    public function toArray($request)
+    public function toArray(Request $request): array|JsonSerializable|Arrayable
     {
+        $user = $this['user'];
+
         return [
-            'organization'      => new OrganizationResource($this['organization']),
-            'user'              => new UserResource($this['user']),
-            'profile_picture'   => $this['profile_picture'],
-            'background_picture'   => $this['background_picture'],
-            'connections_count' => $this['connections_count'],
-            'followers_count'   => $this['followers_count'],
-            'followings_count'  => $this['followings_count'],
+            'token'              => $this['token'],
+            'user'               => new UserResource($user),
+            'company'            => new CompanyResource($user->company) ?? null,
+            'profile_picture'    => $user->getFirstMediaUrl('profile_picture'),
+            'background_picture' => $user->getFirstMediaUrl('background_picture'),
+            'connections_count'  => $user->connections->count(),
+            'followers_count'    => $user->followers->count(),
+            'followings_count'   => $user->followings->count(),
         ];
     }
 }

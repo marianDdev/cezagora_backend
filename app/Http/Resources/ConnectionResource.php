@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources;
 
-use App\Models\Organization;
+use App\Models\Company;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ConnectionResource extends JsonResource
@@ -15,7 +15,7 @@ class ConnectionResource extends JsonResource
      */
     public function toArray($request)
     {
-        $connection = Organization::find($this->connected_organization_id);
+        $connection = Company::find($this->connected_company_id);
 
         return [
             'name' => $connection->name,

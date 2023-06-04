@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Organization;
+use App\Models\Company;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
@@ -18,7 +18,7 @@ class StoreMessageRequest extends FormRequest
     {
         return [
             'message' => ['required', 'string'],
-            'interlocutor_id' => ['required', 'integer', Rule::exists(Organization::class, 'id')],
+            'interlocutor_id' => ['required', 'integer', Rule::exists(Company::class, 'id')],
         ];
     }
 }

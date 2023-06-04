@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\Organization;
+use App\Models\Company;
 use App\Models\User;
 use Exception;
 use Illuminate\Support\Collection;
@@ -26,19 +26,19 @@ class SearchService
     {
         /** @var User $authUser */
         $authUser           = Auth::user();
-        $authOrganizationId = $authUser->organization->id;
+        $authCompanyId = $authUser->company->id;
 
         /** @var Collection $collection */
-        $collection = Organization::where('id', '!=', $authOrganizationId)
-                                  ->when(!empty($filters['keyword']), function ($query) use ($filters) {
+        $collection = Company::where('id', '!=', $authCompanyId)
+                             ->when(!empty($filters['keyword']), function ($query) use ($filters) {
                                       return $query
                                           ->where('name', 'LIKE', "%{$filters['keyword']}%")
                                           ->orWhereJsonContains('products_categories', $filters['keyword']);
                                   })
-                                  ->when(!empty($filters['company_types']), function ($query) use ($filters) {
+                             ->when(!empty($filters['company_types']), function ($query) use ($filters) {
                                       return $query->whereJsonContains('company_types', $filters['type']);
                                   })
-                                  ->when(!empty($filters['continent']), function ($query) use ($filters) {
+                             ->when(!empty($filters['continent']), function ($query) use ($filters) {
                                       return $query->where('continent', $filters['continent']);
                                   })
                                   ->when(!empty($filters['country']), function ($query) use ($filters) {
@@ -59,7 +59,7 @@ class SearchService
         if (!$collection->isEmpty()) {
             foreach ($collection as $item) {
 
-                $networkingStats = $this->networkingService->getNetworkingStatusByOrganizationId($item->id);
+                $networkingStats = $this->networkingService->getNetworkingStatusByCompanyId($item->id);
                 $item->following = $networkingStats['followed'];
                 $item->connected = $networkingStats['connected'];
 

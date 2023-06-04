@@ -13,7 +13,7 @@ class Comment extends Model implements HasMedia
     use HasFactory, InteractsWithMedia;
 
     protected $fillable = [
-        'author_organization_id',
+        'author_company_id',
         'post_id',
         'text',
     ];
@@ -25,7 +25,7 @@ class Comment extends Model implements HasMedia
 
     public function author(): BelongsTo
     {
-        return $this->belongsTo(Organization::class, 'author_organization_id', 'id');
+        return $this->belongsTo(User::class);
     }
 
     public function hasAttribute(string $key): bool

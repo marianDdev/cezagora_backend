@@ -5,14 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
-class OrganizationThread extends Pivot
+class ThreadUser extends Pivot
 {
-    protected $fillable   = ['organization_id', 'thread_id'];
+    protected $fillable   = ['user_id', 'thread_id'];
     public    $timestamps = false;
 
-    public function organization(): HasOne
+    public function user(): HasOne
     {
-        return $this->hasOne(Organization::class);
+        return $this->hasOne(User::class);
     }
 
     public function thread(): HasOne

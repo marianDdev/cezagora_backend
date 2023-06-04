@@ -8,27 +8,21 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
-        Schema::create('messages', function (Blueprint $table) {
+        Schema::create('company_categories', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id');
-            $table->foreignId('thread_id');
-            $table->string('body');
+            $table->string('name');
             $table->timestamps();
         });
     }
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
-        Schema::dropIfExists('messages');
+        Schema::dropIfExists('company_categories');
     }
 };

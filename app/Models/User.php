@@ -2,24 +2,27 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
- * @property Organization $organization
+ * @property Company $company
  */
-class User extends Authenticatable
+class User extends Authenticatable implements HasMedia
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, InteractsWithMedia;
 
     protected $fillable = [
-        'organization_id',
-        'company_name',
+        'first_name',
+        'last_name',
+        'company_id',
         'email',
         'password',
         'is_admin',
@@ -34,69 +37,64 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function organization(): BelongsTo
+    public function company(): BelongsTo
     {
-        return $this->belongsTo(Organization::class);
-    }
-
-    public function isRetailer()
-    {
-        return $this->organization->type = Organization::RETAILER_TYPE;
-    }
-
-    public function isDistributor()
-    {
-        return $this->organization->type = Organization::DISTRIBUTOR_TYPE;
-    }
-
-    public function isWholeSaler()
-    {
-        return $this->organization->type = Organization::WHOLESALER_TYPE;
-    }
-
-    public function isManufacturer()
-    {
-        return $this->organization->type = Organization::MANUFACTURER_TYPE;
-    }
-
-    public function connectionRequests(): HasMany
-    {
-        return $this->hasMany(ConnectionRequest::class);
-    }
-
-    public function hasConnectionRequests(): bool
-    {
-        return !is_null($this->connectionRequests);
+        return $this->belongsTo(Company::class);
     }
 
     public function connections(): HasMany
     {
-        return $this->hasMany(Connection::class);
+        return $this->hasMany(Connection::class, 'user_id', 'id');
     }
 
-    public function hasConnections(): bool
+    public function posts(): HasMany
     {
-        return !is_null($this->connections);
+        return $this->hasMany(Post::class);
     }
 
-    public function followings(): HasMany
+    public function comments(): HasMany
     {
-        return $this->hasMany(Follower::class);
+        return $this->hasMany(Comment::class);
     }
 
-    public function hasFollowings(): bool
+    public function threads(): BelongsToMany
     {
-        return !is_null($this->followings);
+        return $this->belongsToMany(Thread::class);
+    }
+
+    public function messages(): HasMany
+    {
+        return $this->hasMany(Message::class);
     }
 
     public function followers(): HasMany
     {
-        return $this->hasMany(Follower::class);
+        return $this->hasMany(Follower::class, 'followed_user_id', 'id');
     }
 
-    public function hasFollowers(): bool
+    public function followings(): HasMany
     {
-        return !is_null($this->followers);
+        return $this->hasMany(Follower::class, 'user_id', 'id');
+    }
+
+    public function connectionRequestsSent()
+    {
+        return $this->hasMany(ConnectionRequest::class, 'user_id', 'id');
+    }
+
+    public function connectionRequestsReceived()
+    {
+        return $this->hasMany(ConnectionRequest::class, 'receiver_user_id', 'id');
+    }
+
+    public function products(): HasMany
+    {
+        return $this->hasMany(Product::class);
+    }
+
+    public function services(): BelongsToMany
+    {
+        return $this->belongsToMany(Service::class);
     }
 
     public function isAdmin(): bool

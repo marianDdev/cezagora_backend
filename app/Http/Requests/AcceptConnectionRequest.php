@@ -3,7 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Models\ConnectionRequest;
-use App\Models\Organization;
+use App\Models\Company;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
