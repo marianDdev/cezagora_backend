@@ -20,8 +20,8 @@ return new class extends Migration
     {
         Schema::create('connections', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('organization_id');
-            $table->foreignId('connected_organization_id');
+            $table->foreignId('user_id');
+            $table->foreignId('connection_user_id');
             $table->timestamps();
         });
     }

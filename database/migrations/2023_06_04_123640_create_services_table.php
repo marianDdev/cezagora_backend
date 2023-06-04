@@ -11,7 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::rename('organizations', 'companies');
+        Schema::create('services', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->integer('price');
+            $table->text('description');
+            $table->timestamps();
+        });
     }
 
     /**
@@ -19,8 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('organizations', function (Blueprint $table) {
-            //
-        });
+        Schema::dropIfExists('services');
     }
 };

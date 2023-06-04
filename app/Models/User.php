@@ -4,17 +4,20 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
  * @property Company $company
  */
-class User extends Authenticatable
+class User extends Authenticatable implements HasMedia
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, InteractsWithMedia;
 
     protected $fillable = [
         'first_name',
@@ -39,39 +42,9 @@ class User extends Authenticatable
         return $this->belongsTo(Company::class);
     }
 
-    public function isRetailer()
-    {
-        return $this->company->type = Company::RETAILER_TYPE;
-    }
-
-    public function isDistributor()
-    {
-        return $this->company->type = Company::DISTRIBUTOR_TYPE;
-    }
-
-    public function isWholeSaler()
-    {
-        return $this->company->type = Company::WHOLESALER_TYPE;
-    }
-
-    public function isManufacturer()
-    {
-        return $this->company->type = Company::MANUFACTURER_TYPE;
-    }
-
-    public function connectionRequests(): HasMany
-    {
-        return $this->hasMany(ConnectionRequest::class);
-    }
-
-    public function hasConnectionRequests(): bool
-    {
-        return !is_null($this->connectionRequests);
-    }
-
     public function connections(): HasMany
     {
-        return $this->hasMany(Connection::class);
+        return $this->hasMany(Connection::class, 'user_id', 'id');
     }
 
     public function posts(): HasMany
@@ -84,29 +57,44 @@ class User extends Authenticatable
         return $this->hasMany(Comment::class);
     }
 
-    public function hasConnections(): bool
+    public function threads(): BelongsToMany
     {
-        return !is_null($this->connections);
+        return $this->belongsToMany(Thread::class);
     }
 
-    public function followings(): HasMany
+    public function messages(): HasMany
     {
-        return $this->hasMany(Follower::class);
-    }
-
-    public function hasFollowings(): bool
-    {
-        return !is_null($this->followings);
+        return $this->hasMany(Message::class);
     }
 
     public function followers(): HasMany
     {
-        return $this->hasMany(Follower::class);
+        return $this->hasMany(Follower::class, 'followed_user_id', 'id');
     }
 
-    public function hasFollowers(): bool
+    public function followings(): HasMany
     {
-        return !is_null($this->followers);
+        return $this->hasMany(Follower::class, 'user_id', 'id');
+    }
+
+    public function connectionRequestsSent()
+    {
+        return $this->hasMany(ConnectionRequest::class, 'user_id', 'id');
+    }
+
+    public function connectionRequestsReceived()
+    {
+        return $this->hasMany(ConnectionRequest::class, 'receiver_user_id', 'id');
+    }
+
+    public function products(): HasMany
+    {
+        return $this->hasMany(Product::class);
+    }
+
+    public function services(): BelongsToMany
+    {
+        return $this->belongsToMany(Service::class);
     }
 
     public function isAdmin(): bool

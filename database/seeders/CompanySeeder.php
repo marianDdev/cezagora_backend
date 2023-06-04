@@ -17,9 +17,9 @@ class CompanySeeder extends Seeder
      */
     public function run()
     {
-        $organization = Company::create(
+        $company = Company::create(
             [
-                'company_types'       => [],
+                'company_category_id'       => null,
                 'name'                => 'Cezius Link',
                 'email'               => 'marian@cezius.tech',
                 'phone'               => '0737014770',
@@ -27,9 +27,6 @@ class CompanySeeder extends Seeder
                 'country'             => 'Romania',
                 'city'                => 'Bucharest',
                 'address'             => 'Str Patriotilor nr 9',
-                'products_categories' => ProductsCategory::inRandomOrder()->take(rand(1, 10))->get()->pluck('name'),
-                'selling_methods'     => [],
-                'marketplaces'        => null,
             ]
         );
 
@@ -38,7 +35,7 @@ class CompanySeeder extends Seeder
                 'first_name' => 'Marian',
                 'last_name' => 'Dumitru',
                 'is_admin' => true,
-                'company_id' => $organization->id,
+                'company_id' => $company->id,
                 'email' => 'marian@cezius.tech',
                 'email_verified_at' => now(),
                 'password' => '$2y$10$vCm4/r2zlSyOl6bkylqhsu.mhxP/.3q/NNXMGbZEg5MrMQk96hae6',

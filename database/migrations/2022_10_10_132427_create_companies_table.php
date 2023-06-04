@@ -14,21 +14,16 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('organizations', function (Blueprint $table) {
+        Schema::create('companies', function (Blueprint $table) {
             $table->id();
-            $table->enum('company_type', Company::TYPES)->nullable();
-            $table->integer('number_of_users')->default(1);
+            $table->foreignId('company_category_id')->nullable();
             $table->string('name')->nullable();
             $table->string('email')->nullable();
             $table->string('phone')->nullable();
-            $table->enum('continent', Company::CONTINENTS)->nullable();
+            $table->string('continent')->nullable();
             $table->string('country')->nullable();
             $table->string('city')->nullable();
             $table->text('address')->nullable();
-            $table->json('products_categories')->nullable();
-            $table->json('selling_methods')->nullable();
-            $table->enum('marketplaces', Company::MARKETPLACES)->nullable();
-            $table->boolean('has_list_uploaded')->default(false);
             $table->boolean('has_details_completed')->default(false);
             $table->timestamps();
         });

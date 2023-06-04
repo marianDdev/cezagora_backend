@@ -16,9 +16,9 @@ class Message extends Model
       'body'
     ];
 
-    public function company(): BelongsTo
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(Company::class, 'author_id', 'id');
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
     public function thread(): BelongsTo

@@ -14,7 +14,8 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthenticationController extends Controller
 {
-    public function register(RegisterRequest $request): array {
+    public function register(RegisterRequest $request): AuthResponseResource
+    {
         $validated = $request->validated();
         $user      = User::create($validated);
         event(new Registered($user));
@@ -22,28 +23,28 @@ class AuthenticationController extends Controller
         Auth::login($user);
 
         $token = $user->createToken('auth_token')->plainTextToken;
-
-        return [
+        $data  = [
             'token' => $token,
             'user'  => $user,
         ];
+
+        return new AuthResponseResource($data);
     }
 
-    public function login(
-        Request     $request,
-        AuthService $authService,
-    ): array|JsonResponse
+    public function login(Request $request): array|JsonResponse
     {
         if (!Auth::attempt($request->only('email', 'password'))) {
-            return response()->json([
-                                        'message' => 'Invalid login details',
-                                    ], 401);
+            return response()->json(['message' => 'Invalid login details'], 401);
         }
 
         $user = User::where('email', $request['email'])->firstOrFail();
+        $token       = $user->createToken('auth_token')->plainTextToken;
+        $data  = [
+            'token' => $token,
+            'user'  => $user,
+        ];
 
-        $token            = $user->createToken('auth_token')->plainTextToken;
-        $userCompany = $user->company;
+        return new AuthResponseResource($data);
 
         return $authService->responseData($user, $userCompany, $token);
     }

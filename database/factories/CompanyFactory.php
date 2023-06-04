@@ -3,7 +3,9 @@
 namespace Database\Factories;
 
 use App\Models\Company;
+use App\Models\CompanyCategory;
 use App\Models\ProductsCategory;
+use App\Models\Service;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -18,19 +20,9 @@ class CompanyFactory extends Factory
      */
     public function definition()
     {
-        $type = $this->faker->randomElement(Company::TYPES);
-        $sellingMethods = null;
-        $marketplaces = null;
-
-        if ($type === Company::RETAILER_TYPE) {
-            $sellingMethods = $this->faker->randomElements(Company::SELLING_METHODS);
-
-            if (in_array(Company::ON_MARKETPLACE_METHOD, $sellingMethods)) {
-                $marketplaces = $this->faker->randomElement(Company::MARKETPLACES);
-            }
-        }
+        $type = $this->faker->randomElement(CompanyCategory::TYPES);
         return [
-            'company_types' => [],
+            'company_category_id' => CompanyCategory::inRandomOrder()->first()->id,
             'name' => $this->faker->company,
             'email' => $this->faker->companyEmail,
             'phone' => $this->faker->phoneNumber,
@@ -38,9 +30,6 @@ class CompanyFactory extends Factory
             'country' => $this->faker->country,
             'city' => $this->faker->city,
             'address' => $this->faker->streetAddress,
-            'products_categories' => ProductsCategory::inRandomOrder()->take(rand(1,10))->get()->pluck('name'),
-            'selling_methods' => [],
-            'marketplaces' => $marketplaces
         ];
     }
 }

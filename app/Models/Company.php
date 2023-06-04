@@ -6,19 +6,11 @@ use Illuminate\Database\Eloquent\Casts\AsCollection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Spatie\MediaLibrary\HasMedia;
-use Spatie\MediaLibrary\InteractsWithMedia;
 
-/**
- * @property string  $type
- * @property integer $id
- */
-class Company extends Model implements HasMedia
+class Company extends Model
 {
-    use HasFactory, InteractsWithMedia;
+    use HasFactory;
 
     const IN_STORE_METHOD       = 'in_store';
     const ONLINE_SHOP_METHOD    = 'online_shop';
@@ -50,18 +42,6 @@ class Company extends Model implements HasMedia
         self::OTHER_MARKETPLACE,
     ];
 
-    const MANUFACTURER_TYPE = 'manufacturer';
-    const DISTRIBUTOR_TYPE  = 'distributor';
-    const WHOLESALER_TYPE   = 'wholesaler';
-    const RETAILER_TYPE     = 'retailer';
-
-    const TYPES = [
-        self::MANUFACTURER_TYPE,
-        self::DISTRIBUTOR_TYPE,
-        self::WHOLESALER_TYPE,
-        self::RETAILER_TYPE,
-    ];
-
     const CONTINENTS = ['Africa', 'Asia', 'Europe', 'North America', 'Oceania', 'South America'];
 
     protected $casts = [
@@ -85,72 +65,18 @@ class Company extends Model implements HasMedia
         'company_types',
     ];
 
-    public function retailer(): HasOne
-    {
-        return $this->hasOne(Retailer::class);
-    }
-
-    public function distributor(): HasOne
-    {
-        return $this->hasOne(Distributor::class);
-    }
-
-    public function manufacturer(): HasOne
-    {
-        return $this->hasOne(Manufacturer::class);
-    }
-
-    public function wholesaler(): HasOne
-    {
-        return $this->hasOne(Wholesaler::class);
-    }
-
     public function user(): HasOne
     {
         return $this->hasOne(User::class);
     }
 
-    public function connectionRequestsSent(): HasMany
-    {
-        return $this->hasMany(ConnectionRequest::class, 'requester_company_id', 'id');
-    }
-
-    public function connectionRequestsReceived(): HasMany
-    {
-        return $this->hasMany(ConnectionRequest::class, 'receiver_company_id', 'id');
-    }
-
-    public function connections(): HasMany
-    {
-        return $this->hasMany(Connection::class);
-    }
-
-    public function followers(): HasMany
-    {
-        return $this->hasMany(Follower::class, 'followed_company_id', 'id');
-    }
-
-    public function followings(): HasMany
-    {
-        return $this->hasMany(Follower::class, 'follower_company_id', 'id');
-    }
 
     public function hasAttribute(string $key): bool
     {
         return array_key_exists($key, $this->getAttributes());
     }
 
-    public function threads(): BelongsToMany
-    {
-        return $this->belongsToMany(Company::class);
-    }
-
-    public function messages(): HasMany
-    {
-        return $this->hasMany(Message::class);
-    }
-
-    public function companyCategory(): BelongsTo
+    public function category(): BelongsTo
     {
         return $this->belongsTo(CompanyCategory::class);
     }
