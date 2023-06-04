@@ -31,7 +31,7 @@ class AuthenticationController extends Controller
         return new AuthResponseResource($data);
     }
 
-    public function login(Request $request): array|JsonResponse
+    public function login(Request $request): AuthResponseResource
     {
         if (!Auth::attempt($request->only('email', 'password'))) {
             return response()->json(['message' => 'Invalid login details'], 401);
@@ -45,8 +45,6 @@ class AuthenticationController extends Controller
         ];
 
         return new AuthResponseResource($data);
-
-        return $authService->responseData($user, $userCompany, $token);
     }
 
     public function adminLogin(Request $request): JsonResponse

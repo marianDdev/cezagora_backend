@@ -14,14 +14,8 @@ class AuthResponseResource extends JsonResource
         $user = $this['user'];
 
         return [
-            'token'              => $this['token'],
-            'user'               => new UserResource($user),
-            'company'            => new CompanyResource($user->company) ?? null,
-            'profile_picture'    => $user->getFirstMediaUrl('profile_picture'),
-            'background_picture' => $user->getFirstMediaUrl('background_picture'),
-            'connections_count'  => $user->connections->count(),
-            'followers_count'    => $user->followers->count(),
-            'followings_count'   => $user->followings->count(),
+            'token' => $this['token'],
+            'user'  => new UserResource($user),
         ];
     }
 }
